@@ -1,0 +1,10 @@
+# FuelPHP Logs and Cache
+fuel/app/logs/*/
+fuel/app/cache/*/
+
+# Docker Local Data (Prevents committing actual database files)
+docker/db/data/
+
+# OS Metadata
+.DS_Store
+Thumbs.db
