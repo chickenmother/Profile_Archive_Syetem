@@ -141,3 +141,23 @@ h1 {
     margin-left: 10px;
 }
 .btn-accept { background-color: #00bfa5; color: white; border: none !important; }
+
+/* Remember Me */
+.remember-me {
+    margin-top: -5px;
+    margin-bottom: 15px;
+}
+.remember-me label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.9rem;
+    color: #555;
+    cursor: pointer;
+    font-weight: normal;
+}
+.remember-me input[type="checkbox"] {
+    width: 16px;
+    height: 16px;
+    cursor: pointer;
+}
