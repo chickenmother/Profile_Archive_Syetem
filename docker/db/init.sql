@@ -30,6 +30,7 @@ CREATE TABLE IF NOT EXISTS `employees` (
   `department_id` INT,
   `position_id` INT,
   `introduction` TEXT,
+  `remember_token` VARCHAR(64) DEFAULT NULL COMMENT 'Remember-me persistent login token',
   FOREIGN KEY (`department_id`) REFERENCES `departments`(`id`) ON UPDATE CASCADE ON DELETE CASCADE,
   FOREIGN KEY (`position_id`) REFERENCES `positions`(`id`) ON UPDATE CASCADE ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
