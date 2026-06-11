@@ -94,10 +94,10 @@ INSERT INTO `projects` (`id`, `name`, `leader_name`, `start_date`, `end_date`, `
 -- 4. Seed Employees
 -- Note: Passwords below are mock bcrypt-length hashes for 'password123'
 INSERT INTO `employees` (`id`, `name`, `email`, `password`, `hire_date`, `department_id`, `position_id`, `introduction`) VALUES
-(1, 'Song Junran', 'j.song@example.com', '$2y$10$7vR7D6P1XvL3p2O7fK6uO.gI1Fv6zT2e1vQ4jH5g7f8d9s0a1b2c3', '2024-04-01', 1, 3, 'Specializes in web application development, Docker microservices, and retail digital transformation strategy.'),
-(2, 'Alice Smith', 'a.smith@example.com', '$2y$10$7vR7D6P1XvL3p2O7fK6uO.gI1Fv6zT2e1vQ4jH5g7f8d9s0a1b2c3', '2025-01-10', 2, 2, 'Senior consultant focused on enterprise AI scaling and cloud integration pipeline design.'),
-(3, 'Bob Jones', 'b.jones@example.com', '$2y$10$7vR7D6P1XvL3p2O7fK6uO.gI1Fv6zT2e1vQ4jH5g7f8d9s0a1b2c3', '2025-06-01', 1, 1, 'Full-stack engineer with experience building secure internal corporate archiving solutions.'),
-(4, 'Yuki Tanaka', 'y.tanaka@example.com', '$2y$10$7vR7D6P1XvL3p2O7fK6uO.gI1Fv6zT2e1vQ4jH5g7f8d9s0a1b2c3', '2026-04-01', 1, 1, 'Junior developer assisting with database normalization updates and system testing.');
+(1, 'Song Junran', 'j.song@example.com', '$2y$10$RtP1UPTxAGs3.RkODgQCd.0YEGFiUL/wr1u75saqybVvoTZaiLr3W', '2024-04-01', 1, 3, 'Specializes in web application development, Docker microservices, and retail digital transformation strategy.'),
+(2, 'Alice Smith', 'a.smith@example.com', '$2y$10$RtP1UPTxAGs3.RkODgQCd.0YEGFiUL/wr1u75saqybVvoTZaiLr3W', '2025-01-10', 2, 2, 'Senior consultant focused on enterprise AI scaling and cloud integration pipeline design.'),
+(3, 'Bob Jones', 'b.jones@example.com', '$2y$10$RtP1UPTxAGs3.RkODgQCd.0YEGFiUL/wr1u75saqybVvoTZaiLr3W', '2025-06-01', 1, 1, 'Full-stack engineer with experience building secure internal corporate archiving solutions.'),
+(4, 'Yuki Tanaka', 'y.tanaka@example.com', '$2y$10$RtP1UPTxAGs3.RkODgQCd.0YEGFiUL/wr1u75saqybVvoTZaiLr3W', '2026-04-01', 1, 1, 'Junior developer assisting with database normalization updates and system testing.');
 
 -- 5. Seed Employees-Projects Junction (Many-to-Many)
 INSERT INTO `employeesProjects` (`employee_id`, `project_id`) VALUES
