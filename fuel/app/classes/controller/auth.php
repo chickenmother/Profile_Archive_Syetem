@@ -62,7 +62,8 @@ class Controller_Auth extends Controller
                 Session::set('employee_name', $employee['name']);
 
                 // 3. Handle "Remember Me" cookie if requested
-                if ($remember) {
+                $cookie_consent = Cookie::get('cookie_consent') === 'accepted';
+                if ($remember && $cookie_consent) {
                     // Generate a secure random token
                     $token = bin2hex(random_bytes(32));
 
