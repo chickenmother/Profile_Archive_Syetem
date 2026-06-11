@@ -18,11 +18,7 @@ class Controller_Auth extends Controller
         $remember_token = Cookie::get('remember_token');
         if ($remember_token) {
             // Look up employee by remember_token hash
-            $employee = DB::select('*')
-                ->from('employees')
-                ->where('remember_token', '=', $remember_token)
-                ->execute()
-                ->current();
+            $employee = Model_Employee::find_by_remember_token($remember_token);
 
             if ($employee) {
                 // Re-establish session
@@ -56,14 +52,10 @@ class Controller_Auth extends Controller
             $remember = Input::post('remember') == '1';
 
             // 1. Look up the employee record via email from your seeded DB setup
-            $employee = DB::select('*')
-                ->from('employees')
-                ->where('email', '=', $email)
-                ->execute()
-                ->current();
+            $employee = Model_Employee::find_by_email($email);
 
             // 2. Validate row existence and handle cryptographic verification match
-            if ($employee && password_verify($password, $employee['password']))
+            if ($employee && Model_Employee::verify_password($employee, $password))
             {
                 // Login Success -> Create clean application session states
                 Session::set('employee_id', $employee['id']);
@@ -75,20 +67,13 @@ class Controller_Auth extends Controller
                     $token = bin2hex(random_bytes(32));
 
                     // Store the token in the employee record (plaintext token as identifier)
-                    DB::update('employees')
-                        ->set(array('remember_token' => $token))
-                        ->where('id', '=', $employee['id'])
-                        ->execute();
+                    Model_Employee::update_remember_token($employee['id'], $token);
 
                     // Set persistent cookie (30 days)
                     Cookie::set('remember_token', $token, 30 * 24 * 60 * 60);
                 } else {
                     // Clear any existing remember token from DB and cookie
-                    DB::update('employees')
-                        ->set(array('remember_token' => null))
-                        ->where('id', '=', $employee['id'])
-                        ->execute();
-
+                    Model_Employee::update_remember_token($employee['id'], null);
                     Cookie::delete('remember_token');
                 }
 
@@ -112,10 +97,7 @@ class Controller_Auth extends Controller
         // Clear remember-me token from DB and cookie if present
         $employee_id = Session::get('employee_id');
         if ($employee_id) {
-            DB::update('employees')
-                ->set(array('remember_token' => null))
-                ->where('id', '=', $employee_id)
-                ->execute();
+            Model_Employee::update_remember_token($employee_id, null);
         }
 
         Cookie::delete('remember_token');
