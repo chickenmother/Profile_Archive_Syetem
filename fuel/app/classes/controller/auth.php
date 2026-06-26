@@ -79,7 +79,7 @@ class Controller_Auth extends Controller
                 }
 
                 // Redirect straight into your home base landing index area
-                Response::redirect('/welcome');
+                Response::redirect('/dashboard');
             }
             else
             {
