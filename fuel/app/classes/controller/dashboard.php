@@ -37,13 +37,18 @@ class Controller_Dashboard extends Controller
     {
         // Get all employees with department and position names
         $employees = Model_Employee::get_all_with_details();
-    
 
-        // Enrich with default count values for card metrics
+        // Enrich each employee with full profile data (skills, certs, projects, comments)
         for ($i = 0; $i < count($employees); $i++) {
-            $employees[$i]['project_count'] = 0;
-            $employees[$i]['skill_count'] = 0;
-            $employees[$i]['certificate_count'] = 0;
+            $profile = Model_Employee::get_profile_data($employees[$i]['id']);
+            $employees[$i]['skills']       = $profile['skills'];
+            $employees[$i]['certificates'] = $profile['certificates'];
+            $employees[$i]['projects']     = $profile['projects'];
+            $employees[$i]['comments']     = $profile['comments'];
+            // Real counts from actual data
+            $employees[$i]['project_count']     = count($profile['projects']);
+            $employees[$i]['skill_count']        = count($profile['skills']);
+            $employees[$i]['certificate_count']  = count($profile['certificates']);
         }
 
         // Get filter dropdown options

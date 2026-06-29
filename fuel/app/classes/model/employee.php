@@ -93,4 +93,43 @@ class Model_Employee extends Model
         }
         return $employees;
     }
+
+    // Get full profile data for a single employee (skills, certs, projects, comments)
+    public static function get_profile_data($employee_id)
+    {
+        // Skills: skill_id (for name lookup from config) + level
+        $skills = DB::query(
+            "SELECT skill_id, level FROM skills WHERE employee_id = :id"
+        )->param('id', $employee_id)->execute()->as_array();
+
+        // Certificates: certificate_id (for name lookup from config) + level + scale
+        $certificates = DB::query(
+            "SELECT certificate_id, level, scale FROM certificates WHERE employee_id = :id"
+        )->param('id', $employee_id)->execute()->as_array();
+
+        // Projects: via junction table
+        $projects = DB::query(
+            "SELECT p.name, p.status, p.start_date, p.end_date
+             FROM projects p
+             JOIN employeesProjects ep ON p.id = ep.project_id
+             WHERE ep.employee_id = :id
+             ORDER BY p.start_date DESC"
+        )->param('id', $employee_id)->execute()->as_array();
+
+        // Comments received by this employee
+        $comments = DB::query(
+            "SELECT c.content, c.create_time, e.name AS author_name
+             FROM comments c
+             JOIN employees e ON c.author_id = e.id
+             WHERE c.receiver_id = :id
+             ORDER BY c.create_time DESC"
+        )->param('id', $employee_id)->execute()->as_array();
+
+        return array(
+            'skills'       => $skills,
+            'certificates' => $certificates,
+            'projects'     => $projects,
+            'comments'     => $comments,
+        );
+    }
 }

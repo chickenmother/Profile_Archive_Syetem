@@ -47,6 +47,7 @@ CREATE TABLE IF NOT EXISTS `employeesProjects` (
 CREATE TABLE IF NOT EXISTS `skills` (
   `id` INT AUTO_INCREMENT PRIMARY KEY,
   `employee_id` INT NOT NULL,
+  `skill_id` INT NOT NULL COMMENT 'References the skill type key in config/skills.php',
   `level` VARCHAR(50) NOT NULL COMMENT 'beginner, intermediate, expert',
   FOREIGN KEY (`employee_id`) REFERENCES `employees`(`id`) ON UPDATE CASCADE ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -54,6 +55,7 @@ CREATE TABLE IF NOT EXISTS `skills` (
 CREATE TABLE IF NOT EXISTS `certificates` (
   `id` INT AUTO_INCREMENT PRIMARY KEY,
   `employee_id` INT NOT NULL,
+  `certificate_id` INT NOT NULL COMMENT 'References the certificate type key in config/certificates.php',
   `level` VARCHAR(50) NOT NULL COMMENT 'beginner, intermediate, expert',
   `scale` VARCHAR(50) NOT NULL COMMENT 'local, national, international',
   FOREIGN KEY (`employee_id`) REFERENCES `employees`(`id`) ON UPDATE CASCADE ON DELETE CASCADE
@@ -75,9 +77,9 @@ CREATE TABLE IF NOT EXISTS `comments` (
 
 -- 1. Seed Departments
 INSERT INTO `departments` (`id`, `name`, `number_of_employee`) VALUES
-(1, 'System Development Division', 3),
-(2, 'Digital Transformation Consultancy', 2),
-(3, 'Global Operations', 0);
+(1, 'System Development Division', 5),
+(2, 'Digital Transformation Consultancy', 4),
+(3, 'Global Operations', 3);
 
 -- 2. Seed Positions
 INSERT INTO `positions` (`id`, `name`, `admin_level`) VALUES
@@ -89,40 +91,88 @@ INSERT INTO `positions` (`id`, `name`, `admin_level`) VALUES
 INSERT INTO `projects` (`id`, `name`, `leader_name`, `start_date`, `end_date`, `status`) VALUES
 (1, 'Retail AI Hub Integration', 'Song Junran', '2026-04-01', '2026-09-30', 'ongoing'),
 (2, 'E-Commerce Shelf Inventory DX', 'Alice Smith', '2026-01-15', '2026-05-31', 'completed'),
-(3, 'Next-Gen Profile Archive Architecture', 'Bob Jones', '2026-06-01', '2026-12-31', 'planning');
+(3, 'Next-Gen Profile Archive Architecture', 'Bob Jones', '2026-06-01', '2026-12-31', 'planning'),
+(4, 'Cloud Migration Phase 2', 'Alice Smith', '2026-03-01', '2026-08-31', 'ongoing'),
+(5, 'Mobile App Prototype', 'Song Junran', '2025-10-01', '2026-02-28', 'completed');
 
--- 4. Seed Employees
+-- 4. Seed Employees (12 total — enough to test 2 pages of 6)
 -- Note: Passwords below are mock bcrypt-length hashes for 'password123'
 INSERT INTO `employees` (`id`, `name`, `email`, `password`, `hire_date`, `department_id`, `position_id`, `introduction`) VALUES
-(1, 'Song Junran', 'j.song@example.com', '$2y$10$RtP1UPTxAGs3.RkODgQCd.0YEGFiUL/wr1u75saqybVvoTZaiLr3W', '2024-04-01', 1, 3, 'Specializes in web application development, Docker microservices, and retail digital transformation strategy.'),
-(2, 'Alice Smith', 'a.smith@example.com', '$2y$10$RtP1UPTxAGs3.RkODgQCd.0YEGFiUL/wr1u75saqybVvoTZaiLr3W', '2025-01-10', 2, 2, 'Senior consultant focused on enterprise AI scaling and cloud integration pipeline design.'),
-(3, 'Bob Jones', 'b.jones@example.com', '$2y$10$RtP1UPTxAGs3.RkODgQCd.0YEGFiUL/wr1u75saqybVvoTZaiLr3W', '2025-06-01', 1, 1, 'Full-stack engineer with experience building secure internal corporate archiving solutions.'),
-(4, 'Yuki Tanaka', 'y.tanaka@example.com', '$2y$10$RtP1UPTxAGs3.RkODgQCd.0YEGFiUL/wr1u75saqybVvoTZaiLr3W', '2026-04-01', 1, 1, 'Junior developer assisting with database normalization updates and system testing.');
+(1,  'Song Junran',    'j.song@example.com',    '$2y$10$RtP1UPTxAGs3.RkODgQCd.0YEGFiUL/wr1u75saqybVvoTZaiLr3W', '2024-04-01', 1, 3, 'Specializes in web application development, Docker microservices, and retail digital transformation strategy.'),
+(2,  'Alice Smith',    'a.smith@example.com',   '$2y$10$RtP1UPTxAGs3.RkODgQCd.0YEGFiUL/wr1u75saqybVvoTZaiLr3W', '2025-01-10', 2, 2, 'Senior consultant focused on enterprise AI scaling and cloud integration pipeline design.'),
+(3,  'Bob Jones',      'b.jones@example.com',   '$2y$10$RtP1UPTxAGs3.RkODgQCd.0YEGFiUL/wr1u75saqybVvoTZaiLr3W', '2025-06-01', 1, 1, 'Full-stack engineer with experience building secure internal corporate archiving solutions.'),
+(4,  'Yuki Tanaka',    'y.tanaka@example.com',  '$2y$10$RtP1UPTxAGs3.RkODgQCd.0YEGFiUL/wr1u75saqybVvoTZaiLr3W', '2026-04-01', 1, 1, 'Junior developer assisting with database normalization updates and system testing.'),
+(5,  'Maria Garcia',   'm.garcia@example.com',  '$2y$10$RtP1UPTxAGs3.RkODgQCd.0YEGFiUL/wr1u75saqybVvoTZaiLr3W', '2024-07-15', 2, 2, 'Senior consultant specializing in digital transformation roadmaps and stakeholder alignment.'),
+(6,  'Chen Wei',       'c.wei@example.com',     '$2y$10$RtP1UPTxAGs3.RkODgQCd.0YEGFiUL/wr1u75saqybVvoTZaiLr3W', '2025-03-20', 1, 1, 'Backend engineer with a focus on API design, microservices architecture, and performance tuning.'),
+(7,  'Hana Yamamoto',  'h.yamamoto@example.com','$2y$10$RtP1UPTxAGs3.RkODgQCd.0YEGFiUL/wr1u75saqybVvoTZaiLr3W', '2023-09-01', 3, 3, 'Project manager overseeing global operations and cross-regional delivery coordination.'),
+(8,  'Liam O Brien',   'l.obrien@example.com',  '$2y$10$RtP1UPTxAGs3.RkODgQCd.0YEGFiUL/wr1u75saqybVvoTZaiLr3W', '2026-01-05', 3, 1, 'Junior engineer supporting global ops infrastructure and internal tooling automation.'),
+(9,  'Sara Nguyen',    's.nguyen@example.com',  '$2y$10$RtP1UPTxAGs3.RkODgQCd.0YEGFiUL/wr1u75saqybVvoTZaiLr3W', '2024-11-01', 2, 2, 'Consultant with expertise in data analytics, BI dashboards, and enterprise reporting pipelines.'),
+(10, 'Kenji Mori',     'k.mori@example.com',    '$2y$10$RtP1UPTxAGs3.RkODgQCd.0YEGFiUL/wr1u75saqybVvoTZaiLr3W', '2025-08-15', 1, 1, 'Junior developer focused on frontend development with React and TypeScript.'),
+(11, 'Priya Sharma',   'p.sharma@example.com',  '$2y$10$RtP1UPTxAGs3.RkODgQCd.0YEGFiUL/wr1u75saqybVvoTZaiLr3W', '2023-04-01', 3, 2, 'Senior consultant managing vendor relationships and global procurement strategy.'),
+(12, 'David Kim',      'd.kim@example.com',     '$2y$10$RtP1UPTxAGs3.RkODgQCd.0YEGFiUL/wr1u75saqybVvoTZaiLr3W', '2024-02-20', 1, 3, 'Project manager leading system development initiatives and technical team mentorship.');
 
 -- 5. Seed Employees-Projects Junction (Many-to-Many)
 INSERT INTO `employeesProjects` (`employee_id`, `project_id`) VALUES
-(1, 1), -- Song Junran working on Retail AI Hub
-(1, 3), -- Song Junran working on Profile Archive Architecture
-(2, 1), -- Alice Smith working on Retail AI Hub
-(2, 2), -- Alice Smith finished E-Commerce DX
-(3, 3), -- Bob Jones working on Profile Archive Architecture
-(4, 3); -- Yuki Tanaka working on Profile Archive Architecture
+(1,  1), (1,  3), (1,  5),
+(2,  1), (2,  2), (2,  4),
+(3,  3),
+(4,  3),
+(5,  4),
+(6,  1), (6,  3),
+(7,  4), (7,  5),
+(8,  4),
+(9,  2), (9,  4),
+(10, 5),
+(11, 2),
+(12, 1), (12, 3);
 
 -- 6. Seed Skills
-INSERT INTO `skills` (`employee_id`, `level`) VALUES
-(1, 'expert'),        -- Song Junran (PHP/Docker/SQL)
-(1, 'intermediate'),  -- Song Junran (Python/Django)
-(2, 'expert'),        -- Alice Smith (Consulting)
-(3, 'intermediate'),  -- Bob Jones (JavaScript/CSS)
-(4, 'beginner');      -- Yuki Tanaka (Git/Linux)
+-- skill_id references config/skills.php: 1=PHP, 2=JavaScript, 3=Python, 4=Java, 5=C#, 6=C++, 7=Ruby, 8=Go, 9=Swift, 10=Kotlin, 11=TypeScript
+INSERT INTO `skills` (`employee_id`, `skill_id`, `level`) VALUES
+(1,  1,  'expert'),        -- Song Junran: PHP
+(1,  3,  'intermediate'),  -- Song Junran: Python
+(2,  11, 'expert'),        -- Alice Smith: TypeScript
+(3,  2,  'intermediate'),  -- Bob Jones: JavaScript
+(4,  8,  'beginner'),      -- Yuki Tanaka: Go
+(5,  11, 'expert'),        -- Maria Garcia: TypeScript
+(5,  3,  'intermediate'),  -- Maria Garcia: Python
+(6,  1,  'intermediate'),  -- Chen Wei: PHP
+(6,  4,  'expert'),        -- Chen Wei: Java
+(7,  5,  'intermediate'),  -- Hana Yamamoto: C#
+(8,  8,  'beginner'),      -- Liam O Brien: Go
+(8,  2,  'beginner'),      -- Liam O Brien: JavaScript
+(9,  3,  'expert'),        -- Sara Nguyen: Python
+(9,  11, 'intermediate'),  -- Sara Nguyen: TypeScript
+(10, 2,  'intermediate'),  -- Kenji Mori: JavaScript
+(10, 11, 'intermediate'),  -- Kenji Mori: TypeScript
+(11, 5,  'expert'),        -- Priya Sharma: C#
+(12, 1,  'expert'),        -- David Kim: PHP
+(12, 4,  'intermediate');  -- David Kim: Java
 
 -- 7. Seed Certificates
-INSERT INTO `certificates` (`employee_id`, `level`, `scale`) VALUES
-(1, 'expert', 'international'), -- Song Junran (e.g., JLPT N1 or Global IT)
-(2, 'expert', 'national'),      -- Alice Smith
-(3, 'intermediate', 'local');   -- Bob Jones
+-- certificate_id references config/certificates.php: 1=JLPT N1, 2=JLPT N2, 3=AWS Certified Solutions Architect, 4=基本情報技術者, 5=応用情報技術者, 6=TOEIC 700+
+INSERT INTO `certificates` (`employee_id`, `certificate_id`, `level`, `scale`) VALUES
+(1,  1, 'expert',       'international'), -- Song Junran: JLPT N1
+(2,  3, 'expert',       'national'),      -- Alice Smith: AWS Certified Solutions Architect
+(3,  4, 'intermediate', 'local'),         -- Bob Jones: 基本情報技術者
+(4,  2, 'beginner',     'local'),         -- Yuki Tanaka: JLPT N2
+(5,  6, 'expert',       'international'), -- Maria Garcia: TOEIC 700+
+(5,  3, 'intermediate', 'national'),      -- Maria Garcia: AWS Certified Solutions Architect
+(6,  5, 'intermediate', 'national'),      -- Chen Wei: 応用情報技術者
+(7,  1, 'expert',       'international'), -- Hana Yamamoto: JLPT N1
+(7,  6, 'expert',       'international'), -- Hana Yamamoto: TOEIC 700+
+(9,  3, 'expert',       'national'),      -- Sara Nguyen: AWS Certified Solutions Architect
+(10, 4, 'beginner',     'local'),         -- Kenji Mori: 基本情報技術者
+(11, 6, 'expert',       'international'), -- Priya Sharma: TOEIC 700+
+(12, 5, 'expert',       'national'),      -- David Kim: 応用情報技術者
+(12, 3, 'expert',       'national');      -- David Kim: AWS Certified Solutions Architect
 
 -- 8. Seed Comments
 INSERT INTO `comments` (`author_id`, `receiver_id`, `content`) VALUES
-(2, 1, 'Excellent architectural layout on the Retail AI Hub integration blueprint. The container isolation works flawlessly.'),
-(1, 4, 'Great work handling the initial git branching setup for the repository. Keep learning the terminal commands!');
+(2,  1,  'Excellent architectural layout on the Retail AI Hub integration blueprint. The container isolation works flawlessly.'),
+(1,  4,  'Great work handling the initial git branching setup for the repository. Keep learning the terminal commands!'),
+(7,  5,  'Maria brings exceptional clarity to stakeholder presentations. Her roadmaps are always well-structured.'),
+(5,  9,  'Sara''s BI dashboard work on the E-Commerce project was outstanding. The data pipeline she built is very efficient.'),
+(12, 6,  'Chen Wei''s API design for the Retail AI Hub was clean and well-documented. Great attention to performance.'),
+(9,  10, 'Kenji is picking up TypeScript very quickly. His frontend components are clean and well-tested.'),
+(1,  12, 'David''s leadership on the system development team has been invaluable. Strong technical and people skills.');

@@ -109,8 +109,9 @@
 
     <!-- ===== MAIN DASHBOARD ===== -->
     <div class="dashboard-container">
+        <div class="grid-panel">
         <div class="employee-profile-grid">
-            <!-- ko foreach: filteredEmployees -->
+            <!-- ko foreach: pagedEmployees -->
             <div class="employee-card" data-bind="click: $parent.viewProfile">
                 <!-- Card Top: Identity -->
                 <div class="card-top-identity">
@@ -149,14 +150,135 @@
                 </div>
             </div>
             <!-- /ko -->
+
+            <!-- No Results (inside grid so it spans all columns) -->
+            <!-- ko if: filteredEmployees().length === 0 -->
+            <div class="empty-grid-fallback">
+                <i class="fas fa-search" style="font-size: 2.5rem; color: #ccc; margin-bottom: 1rem;"></i>
+                <p>No employees match your filter criteria.</p>
+            </div>
+            <!-- /ko -->
         </div>
 
-        <!-- No Results -->
-        <div class="empty-grid-fallback" data-bind="visible: filteredEmployees().length === 0">
-            <i class="fas fa-search" style="font-size: 2.5rem; color: #ccc; margin-bottom: 1rem;"></i>
-            <p>No employees match your filter criteria.</p>
+        <!-- ===== PAGINATION BAR ===== -->
+        <div class="pagination-bar">
+            <button class="page-btn page-nav" data-bind="click: prevPage, disable: currentPage() === 1">
+                <i class="fas fa-chevron-left"></i>
+            </button>
+            <!-- ko foreach: pageNumbers -->
+            <button class="page-btn" data-bind="text: $data, click: $parent.goToPage, css: { 'page-btn-active': $data === $parent.currentPage() }"></button>
+            <!-- /ko -->
+            <button class="page-btn page-nav" data-bind="click: nextPage, disable: currentPage() === totalPages()">
+                <i class="fas fa-chevron-right"></i>
+            </button>
+            <span class="page-info" data-bind="text: 'Page ' + currentPage() + ' of ' + totalPages()"></span>
+        </div>
+        </div><!-- /.grid-panel -->
+    </div><!-- /.dashboard-container -->
+
+    <!-- ===== PROFILE MODAL OVERLAY ===== -->
+    <!-- ko if: selectedEmployee() !== null -->
+    <div class="profile-modal-overlay" data-bind="click: closeProfile">
+        <div class="profile-modal-panel" data-bind="with: selectedEmployee, click: function(){}, clickBubble: false, animateVisible: true">
+
+            <!-- Close Button -->
+            <button class="modal-close-btn" data-bind="click: $parent.closeProfile, clickBubble: false">
+                <i class="fas fa-times"></i>
+            </button>
+
+            <!-- ① Modal Header: Avatar + Identity -->
+            <div class="modal-header-section">
+                <div class="modal-avatar" data-bind="text: initials"></div>
+                <div class="modal-identity">
+                    <h2 data-bind="text: name"></h2>
+                    <p class="modal-position" data-bind="text: position_name"></p>
+                    <p class="modal-department">
+                        <i class="fas fa-building"></i>
+                        <span data-bind="text: department_name"></span>
+                    </p>
+                    <p class="modal-hire-date">
+                        <i class="fas fa-calendar-alt"></i>
+                        Joined: <span data-bind="text: hire_date"></span>
+                    </p>
+                </div>
+            </div>
+
+            <!-- ② About Section -->
+            <div class="modal-section">
+                <h3 class="modal-section-title"><i class="fas fa-user"></i> About</h3>
+                <p class="modal-about-text" data-bind="text: introduction"></p>
+            </div>
+
+            <!-- ③ Skills Section -->
+            <!-- ko if: skills && skills.length > 0 -->
+            <div class="modal-section">
+                <h3 class="modal-section-title"><i class="fas fa-code"></i> Skills</h3>
+                <div class="modal-badge-row">
+                    <!-- ko foreach: skills -->
+                    <span class="skill-badge" data-bind="css: { 'badge-expert': level === 'expert', 'badge-intermediate': level === 'intermediate', 'badge-beginner': level === 'beginner' }">
+                        <span data-bind="text: skillsConfig[skill_id] || 'Unknown'"></span>
+                        <span class="badge-level" data-bind="text: '— ' + level"></span>
+                    </span>
+                    <!-- /ko -->
+                </div>
+            </div>
+            <!-- /ko -->
+
+            <!-- ④ Certificates Section -->
+            <!-- ko if: certificates && certificates.length > 0 -->
+            <div class="modal-section">
+                <h3 class="modal-section-title"><i class="fas fa-certificate"></i> Certificates</h3>
+                <div class="modal-badge-row">
+                    <!-- ko foreach: certificates -->
+                    <span class="cert-badge" data-bind="css: { 'badge-expert': level === 'expert', 'badge-intermediate': level === 'intermediate', 'badge-beginner': level === 'beginner' }">
+                        <span data-bind="text: certsConfig[certificate_id] || 'Unknown'"></span>
+                        <span class="cert-scale" data-bind="text: '(' + scale + ')'"></span>
+                        <span class="badge-level" data-bind="text: '— ' + level"></span>
+                    </span>
+                    <!-- /ko -->
+                </div>
+            </div>
+            <!-- /ko -->
+
+            <!-- ⑤ Projects Section -->
+            <!-- ko if: projects && projects.length > 0 -->
+            <div class="modal-section">
+                <h3 class="modal-section-title"><i class="fas fa-project-diagram"></i> Projects</h3>
+                <div class="modal-project-list">
+                    <!-- ko foreach: projects -->
+                    <div class="modal-project-row">
+                        <div class="project-info">
+                            <span class="project-name" data-bind="text: name"></span>
+                            <span class="project-dates" data-bind="text: start_date + ' → ' + end_date"></span>
+                        </div>
+                        <span class="project-status-chip" data-bind="text: status, css: { 'status-ongoing': status === 'ongoing', 'status-completed': status === 'completed', 'status-planning': status === 'planning' }"></span>
+                    </div>
+                    <!-- /ko -->
+                </div>
+            </div>
+            <!-- /ko -->
+
+            <!-- ⑥ Comments Section -->
+            <!-- ko if: comments && comments.length > 0 -->
+            <div class="modal-section">
+                <h3 class="modal-section-title"><i class="fas fa-comments"></i> Colleague Comments</h3>
+                <div class="modal-comments-list">
+                    <!-- ko foreach: comments -->
+                    <div class="modal-comment-block">
+                        <p class="comment-content" data-bind="text: content"></p>
+                        <div class="comment-meta">
+                            <span class="comment-author"><i class="fas fa-user-circle"></i> <span data-bind="text: author_name"></span></span>
+                            <span class="comment-date" data-bind="text: create_time"></span>
+                        </div>
+                    </div>
+                    <!-- /ko -->
+                </div>
+            </div>
+            <!-- /ko -->
+
         </div>
     </div>
+    <!-- /ko -->
 
 <script>
         // ===== Hamburger Dropdown Toggle =====
@@ -179,39 +301,63 @@
         }
 
         // ===== Knockout.js Data Initialization Pipeline =====
-        // Using isset checks ensures the JavaScript compilation never drops on empty values
         var employeesData = <?php echo isset($employees_json) ? $employees_json : '[]'; ?>;
-        var skillsConfig  = <?php echo isset($skills_json) ? $skills_json : '[]'; ?>;
-        var certsConfig   = <?php echo isset($certificates_json) ? $certificates_json : '[]'; ?>;
+        var skillsConfig  = <?php echo isset($skills_json) ? $skills_json : '{}'; ?>;
+        var certsConfig   = <?php echo isset($certificates_json) ? $certificates_json : '{}'; ?>;
 
         // Enrich profiles to map empty properties safely
         if (Array.isArray(employeesData)) {
             employeesData.forEach(function(emp) {
-            emp.name              = emp.name || 'Unknown Employee';
-            emp.position_name     = emp.position_name || 'Staff Member';
-            emp.introduction      = emp.introduction || 'No introduction provided.';
-            emp.project_count     = emp.project_count || 0;
-            emp.skill_count       = emp.skill_count || 0;
-            emp.certificate_count = emp.certificate_count || 0;
+                emp.name              = emp.name || 'Unknown Employee';
+                emp.position_name     = emp.position_name || 'Staff Member';
+                emp.department_name   = emp.department_name || 'Unknown Department';
+                emp.introduction      = emp.introduction || 'No introduction provided.';
+                emp.project_count     = emp.project_count || 0;
+                emp.skill_count       = emp.skill_count || 0;
+                emp.certificate_count = emp.certificate_count || 0;
+                emp.skills            = emp.skills || [];
+                emp.certificates      = emp.certificates || [];
+                emp.projects          = emp.projects || [];
+                emp.comments          = emp.comments || [];
 
-            // ✅ Initials — inside forEach where emp is defined
-            var parts = emp.name.trim().split(' ');
-            emp.initials = parts.length >= 2
-                ? (parts[0][0] + parts[parts.length - 1][0]).toUpperCase()
-                : parts[0].substring(0, 2).toUpperCase();
+                // Compute initials
+                var parts = emp.name.trim().split(' ');
+                emp.initials = parts.length >= 2
+                    ? (parts[0][0] + parts[parts.length - 1][0]).toUpperCase()
+                    : parts[0].substring(0, 2).toUpperCase();
 
-            emp.yearsEmployed = emp.hire_date
-                ? Math.floor((new Date() - new Date(emp.hire_date)) / (365.25 * 24 * 60 * 60 * 1000))
-                : 0;
-        });
-    }
+                emp.yearsEmployed = emp.hire_date
+                    ? Math.floor((new Date() - new Date(emp.hire_date)) / (365.25 * 24 * 60 * 60 * 1000))
+                    : 0;
+            });
+        }
 
         function DashboardViewModel() {
             var self = this;
 
             self.allEmployees = employeesData;
 
-            // Reactive UI Filter Tracking
+            // ===== Profile Modal State =====
+            self.selectedEmployee = ko.observable(null);
+
+            self.viewProfile = function(employee) {
+                self.selectedEmployee(employee);
+                document.body.style.overflow = 'hidden'; // prevent background scroll
+            };
+
+            self.closeProfile = function() {
+                self.selectedEmployee(null);
+                document.body.style.overflow = ''; // restore scroll
+            };
+
+            // Close modal on Escape key
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape') {
+                    self.closeProfile();
+                }
+            });
+
+            // ===== Reactive Filter Observables =====
             self.selectedDepartment  = ko.observable('');
             self.selectedPosition    = ko.observable('');
             self.selectedSkill       = ko.observable('');
@@ -219,7 +365,7 @@
             self.selectedYears       = ko.observable('');
             self.searchText          = ko.observable('');
 
-            // Computed Filtering Engine
+            // ===== Computed Filtering Engine =====
             self.filteredEmployees = ko.computed(function() {
                 var dept   = self.selectedDepartment();
                 var pos    = self.selectedPosition();
@@ -229,23 +375,9 @@
                 var search = self.searchText().toLowerCase().trim();
 
                 return self.allEmployees.filter(function(emp) {
-                    // 1. Department Mapping Rule
                     if (dept && dept !== "" && String(emp.department_id) !== dept) return false;
-                    
-                    // 2. Position Mapping Rule
-                    if (pos && pos !== "" && String(emp.position_id) !== pos) return false;
-                    
-                    // 3. Skill Selector Rule
-                    if (skill && skill !== "") {
-                        // Custom conditional filters can go here later
-                    }
+                    if (pos  && pos  !== "" && String(emp.position_id)   !== pos)  return false;
 
-                    // 4. Certificate Selector Rule
-                    if (cert && cert !== "") {
-                        // Custom conditional filters can go here later
-                    }
-
-                    // 5. Tenure Range Computation Rule
                     if (years && years !== "") {
                         var y = parseInt(years);
                         if (y === 1 && emp.yearsEmployed >= 1) return false;
@@ -253,21 +385,51 @@
                         else if (y === 3 && (emp.yearsEmployed < 3 || emp.yearsEmployed > 5)) return false;
                         else if (y === 5 && emp.yearsEmployed < 5) return false;
                     }
-                    
-                    // 6. Text Name Direct Matching Check
+
                     if (search && emp.name.toLowerCase().indexOf(search) === -1) return false;
 
                     return true;
                 });
             });
 
-            self.applyFilters = function() {
-                return true;
+            // ===== Pagination =====
+            var PAGE_SIZE = 6;
+            self.currentPage = ko.observable(1);
+
+            // Reset to page 1 whenever filters change
+            self.filteredEmployees.subscribe(function() {
+                self.currentPage(1);
+            });
+
+            self.totalPages = ko.computed(function() {
+                return Math.max(1, Math.ceil(self.filteredEmployees().length / PAGE_SIZE));
+            });
+
+            // Array of page numbers [1, 2, 3, ...]
+            self.pageNumbers = ko.computed(function() {
+                var pages = [];
+                for (var i = 1; i <= self.totalPages(); i++) {
+                    pages.push(i);
+                }
+                return pages;
+            });
+
+            // Slice of employees for the current page
+            self.pagedEmployees = ko.computed(function() {
+                var start = (self.currentPage() - 1) * PAGE_SIZE;
+                return self.filteredEmployees().slice(start, start + PAGE_SIZE);
+            });
+
+            self.goToPage = function(page) {
+                if (page >= 1 && page <= self.totalPages()) {
+                    self.currentPage(page);
+                }
             };
 
-            self.viewProfile = function(employee) {
-                alert('Profile page for ' + employee.name + ' coming soon!');
-            };
+            self.prevPage = function() { self.goToPage(self.currentPage() - 1); };
+            self.nextPage = function() { self.goToPage(self.currentPage() + 1); };
+
+            self.applyFilters = function() { return true; };
         }
 
         function clearFilters() {
