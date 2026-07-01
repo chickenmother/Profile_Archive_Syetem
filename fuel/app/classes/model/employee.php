@@ -118,7 +118,7 @@ class Model_Employee extends Model
 
         // Comments received by this employee
         $comments = DB::query(
-            "SELECT c.content, c.create_time, e.name AS author_name
+            "SELECT c.id AS comment_id, c.author_id, c.content, c.create_time, e.name AS author_name
              FROM comments c
              JOIN employees e ON c.author_id = e.id
              WHERE c.receiver_id = :id
@@ -131,5 +131,46 @@ class Model_Employee extends Model
             'projects'     => $projects,
             'comments'     => $comments,
         );
+    }
+
+    // Insert a new comment and return the saved comment data (with author name)
+    public static function post_comment($author_id, $receiver_id, $content)
+    {
+        // Insert the comment
+        list($insert_id) = DB::insert('comments')
+            ->columns(['author_id', 'receiver_id', 'content'])
+            ->values([$author_id, $receiver_id, $content])
+            ->execute();
+
+        // Fetch the saved row with author name, timestamp, and IDs
+        $row = DB::query(
+            "SELECT c.id AS comment_id, c.author_id, c.content, c.create_time, e.name AS author_name
+             FROM comments c
+             JOIN employees e ON c.author_id = e.id
+             WHERE c.id = :id"
+        )->param('id', $insert_id)->execute()->current();
+
+        return $row;
+    }
+
+    // Update a comment's content (only if author matches)
+    public static function update_comment($comment_id, $author_id, $new_content)
+    {
+        $affected = DB::update('comments')
+            ->set(['content' => $new_content])
+            ->where('id', '=', $comment_id)
+            ->where('author_id', '=', $author_id)
+            ->execute();
+        return $affected > 0;
+    }
+
+    // Delete a comment (only if author matches)
+    public static function delete_comment($comment_id, $author_id)
+    {
+        $affected = DB::delete('comments')
+            ->where('id', '=', $comment_id)
+            ->where('author_id', '=', $author_id)
+            ->execute();
+        return $affected > 0;
     }
 }

@@ -30,6 +30,7 @@ CREATE TABLE IF NOT EXISTS `employees` (
   `department_id` INT,
   `position_id` INT,
   `introduction` TEXT,
+  `avatar` VARCHAR(255) DEFAULT NULL COMMENT 'Filename of the uploaded avatar image, stored in public/assets/uploads/avatars/',
   `remember_token` VARCHAR(64) DEFAULT NULL COMMENT 'Remember-me persistent login token',
   FOREIGN KEY (`department_id`) REFERENCES `departments`(`id`) ON UPDATE CASCADE ON DELETE CASCADE,
   FOREIGN KEY (`position_id`) REFERENCES `positions`(`id`) ON UPDATE CASCADE ON DELETE CASCADE

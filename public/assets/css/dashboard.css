@@ -838,7 +838,188 @@ body {
     color: var(--muted-text);
 }
 
-/* ===== 9. RESPONSIVE ===== */
+/* ===== 9. COMMENT FORM ===== */
+
+.modal-no-comments {
+    font-size: 0.9rem;
+    color: var(--muted-text);
+    font-style: italic;
+    margin: 0 0 16px 0;
+}
+
+.comment-form-wrapper {
+    margin-top: 18px;
+    border-top: 1px solid #f0f0f0;
+    padding-top: 16px;
+}
+
+.comment-form-title {
+    font-size: 0.8rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    color: var(--muted-text);
+    margin: 0 0 10px 0;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.comment-textarea {
+    width: 100%;
+    border: 1px solid #e0e0e0;
+    border-radius: 10px;
+    padding: 10px 14px;
+    font-size: 0.9rem;
+    font-family: var(--font-stack);
+    color: var(--dark-text);
+    resize: vertical;
+    outline: none;
+    transition: border-color 0.2s;
+    line-height: 1.5;
+}
+
+.comment-textarea:focus {
+    border-color: var(--teal-profile);
+    box-shadow: 0 0 0 3px rgba(0, 191, 165, 0.1);
+}
+
+.comment-form-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 8px;
+    gap: 12px;
+}
+
+.comment-char-count {
+    font-size: 0.75rem;
+    color: var(--muted-text);
+    flex-shrink: 0;
+}
+
+.comment-submit-btn {
+    background: linear-gradient(135deg, #00bfa5, #4fc3f7);
+    color: #ffffff;
+    border: none;
+    border-radius: 8px;
+    padding: 8px 18px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    font-family: var(--font-stack);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: opacity 0.2s;
+}
+
+.comment-submit-btn:hover {
+    opacity: 0.88;
+}
+
+.comment-form-msg {
+    font-size: 0.82rem;
+    margin: 6px 0 0 0;
+    min-height: 1.2em;
+}
+
+.comment-msg-success {
+    color: #2e7d32;
+}
+
+.comment-msg-error {
+    color: #c62828;
+}
+
+/* Edit/Delete action buttons — appear on the right of comment-meta */
+.comment-owner-actions {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    margin-left: auto;
+    flex-shrink: 0;
+}
+
+.comment-edit-btn,
+.comment-delete-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 4px 6px;
+    border-radius: 6px;
+    font-size: 0.78rem;
+    transition: background-color 0.15s, color 0.15s;
+    line-height: 1;
+}
+
+.comment-edit-btn {
+    color: #667eea;
+}
+
+.comment-edit-btn:hover {
+    background-color: #eef0ff;
+    color: #4a5cc7;
+}
+
+.comment-delete-btn {
+    color: #e53935;
+}
+
+.comment-delete-btn:hover {
+    background-color: #fdecea;
+    color: #c62828;
+}
+
+/* Inline edit area */
+.comment-edit-area {
+    margin-bottom: 6px;
+}
+
+.comment-edit-textarea {
+    margin-bottom: 6px;
+}
+
+.comment-edit-actions {
+    display: flex;
+    gap: 8px;
+    justify-content: flex-end;
+}
+
+.comment-save-btn,
+.comment-cancel-btn {
+    border: none;
+    border-radius: 6px;
+    padding: 5px 14px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    font-family: var(--font-stack);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    transition: opacity 0.2s;
+}
+
+.comment-save-btn {
+    background: var(--teal-profile);
+    color: #ffffff;
+}
+
+.comment-save-btn:hover {
+    opacity: 0.85;
+}
+
+.comment-cancel-btn {
+    background: #f0f0f0;
+    color: var(--dark-text);
+}
+
+.comment-cancel-btn:hover {
+    background: #e0e0e0;
+}
+
+/* ===== 10. RESPONSIVE ===== */
 @media (max-width: 768px) {
     .top-banner {
         padding: 0.6rem 1rem;

@@ -280,22 +280,56 @@
             <!-- /ko -->
 
             <!-- ⑥ Comments Section -->
-            <!-- ko if: comments && comments.length > 0 -->
             <div class="modal-section">
                 <h3 class="modal-section-title"><i class="fas fa-comments"></i> Colleague Comments</h3>
-                <div class="modal-comments-list">
+                <!-- ko if: comments && comments.length > 0 -->
+                <div class="modal-comments-list" data-bind="attr: { id: 'comments-list-' + id }">
                     <!-- ko foreach: comments -->
                     <div class="modal-comment-block">
-                        <p class="comment-content" data-bind="text: content"></p>
+                        <!-- View mode — use $index() for reliable DOM IDs -->
+                        <p class="comment-content" data-bind="text: content, attr: { id: 'comment-text-' + $index() }"></p>
+                        <!-- Edit mode (hidden by default) -->
+                        <div class="comment-edit-area" data-bind="attr: { id: 'comment-edit-' + $index() }" style="display:none;">
+                            <textarea class="comment-textarea comment-edit-textarea" rows="3" maxlength="500" data-bind="attr: { id: 'comment-edit-input-' + $index() }"></textarea>
+                            <div class="comment-edit-actions">
+                                <button class="comment-save-btn" data-bind="click: function() { $root.saveComment(comment_id, $index()) }"><i class="fas fa-check"></i> Save</button>
+                                <button class="comment-cancel-btn" data-bind="click: function() { $root.cancelEdit($index()) }"><i class="fas fa-times"></i> Cancel</button>
+                            </div>
+                        </div>
                         <div class="comment-meta">
                             <span class="comment-author"><i class="fas fa-user-circle"></i> <span data-bind="text: author_name"></span></span>
                             <span class="comment-date" data-bind="text: create_time"></span>
+                            <!-- Edit/Delete — only shown to the comment author -->
+                            <!-- ko if: String(author_id) === String($root.currentUserId) -->
+                            <span class="comment-owner-actions">
+                                <button class="comment-edit-btn" data-bind="click: function() { $root.startEdit($index(), content) }" title="Edit"><i class="fas fa-pencil-alt"></i></button>
+                                <button class="comment-delete-btn" data-bind="click: function() { $root.deleteComment(comment_id, $index()) }" title="Delete"><i class="fas fa-trash-alt"></i></button>
+                            </span>
+                            <!-- /ko -->
                         </div>
                     </div>
                     <!-- /ko -->
                 </div>
+                <!-- /ko -->
+                <!-- ko if: !comments || comments.length === 0 -->
+                <p class="modal-no-comments" data-bind="attr: { id: 'comments-list-' + id }">No comments yet. Be the first to leave one!</p>
+                <!-- /ko -->
+
+                <!-- Comment Form — hidden when viewing own profile -->
+                <!-- ko if: id != $root.currentUserId -->
+                <div class="comment-form-wrapper">
+                    <h4 class="comment-form-title"><i class="fas fa-pen"></i> Leave a Comment</h4>
+                    <textarea class="comment-textarea" data-bind="attr: { id: 'comment-input-' + id }" placeholder="Write something about this colleague... (max 500 characters)" maxlength="500" rows="3"></textarea>
+                    <div class="comment-form-footer">
+                        <span class="comment-char-count" data-bind="attr: { id: 'comment-chars-' + id }">0 / 500</span>
+                        <button class="comment-submit-btn" data-bind="click: function() { $parent.submitComment(id) }">
+                            <i class="fas fa-paper-plane"></i> Post Comment
+                        </button>
+                    </div>
+                    <p class="comment-form-msg" data-bind="attr: { id: 'comment-msg-' + id }"></p>
+                </div>
+                <!-- /ko -->
             </div>
-            <!-- /ko -->
 
         </div>
     </div>
@@ -325,6 +359,7 @@
         var employeesData = <?php echo isset($employees_json) ? $employees_json : '[]'; ?>;
         var skillsConfig  = <?php echo isset($skills_json) ? $skills_json : '{}'; ?>;
         var certsConfig   = <?php echo isset($certificates_json) ? $certificates_json : '{}'; ?>;
+        var currentUserId = <?php echo (int)$current_user['id']; ?>;
 
         // Enrich profiles to map empty properties safely
         if (Array.isArray(employeesData)) {
@@ -357,6 +392,7 @@
             var self = this;
 
             self.allEmployees = employeesData;
+            self.currentUserId = currentUserId;
 
             // ===== Profile Modal State =====
             self.selectedEmployee = ko.observable(null);
@@ -479,6 +515,149 @@
             self.nextPage = function() { self.goToPage(self.currentPage() + 1); };
 
             self.applyFilters = function() { return true; };
+
+            // ===== Comment Submission =====
+            self.submitComment = function(receiverId) {
+                var textarea  = document.getElementById('comment-input-' + receiverId);
+                var msgEl     = document.getElementById('comment-msg-' + receiverId);
+                var content   = textarea ? textarea.value.trim() : '';
+
+                if (!content) {
+                    msgEl.textContent = 'Please write something before posting.';
+                    msgEl.className   = 'comment-form-msg comment-msg-error';
+                    return;
+                }
+
+                var formData = new FormData();
+                formData.append('receiver_id', receiverId);
+                formData.append('content', content);
+
+                fetch('/dashboard/comment', {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(function(res) { return res.json(); })
+                .then(function(data) {
+                    if (data.success) {
+                        // Push new comment into the employee's comments array
+                        var emp = self.selectedEmployee();
+                        if (emp) {
+                            emp.comments.unshift(data.comment);
+                            // Force Knockout to re-render by toggling selectedEmployee
+                            self.selectedEmployee(null);
+                            self.selectedEmployee(emp);
+                        }
+                        // Clear textarea and counter
+                        if (textarea) textarea.value = '';
+                        var charEl = document.getElementById('comment-chars-' + receiverId);
+                        if (charEl) charEl.textContent = '0 / 500';
+                        msgEl.textContent = 'Comment posted!';
+                        msgEl.className   = 'comment-form-msg comment-msg-success';
+                        setTimeout(function() { msgEl.textContent = ''; msgEl.className = 'comment-form-msg'; }, 3000);
+                    } else {
+                        msgEl.textContent = data.error || 'Failed to post comment.';
+                        msgEl.className   = 'comment-form-msg comment-msg-error';
+                    }
+                })
+                .catch(function() {
+                    msgEl.textContent = 'Network error. Please try again.';
+                    msgEl.className   = 'comment-form-msg comment-msg-error';
+                });
+            };
+
+            // Wire up character counter (delegated — runs after modal renders)
+            document.addEventListener('input', function(e) {
+                if (e.target && e.target.classList.contains('comment-textarea')) {
+                    var id = e.target.id.replace('comment-input-', '').replace('comment-edit-input-', '');
+                    var charEl = document.getElementById('comment-chars-' + id);
+                    if (charEl) charEl.textContent = e.target.value.length + ' / 500';
+                }
+            });
+
+            // ===== Comment Edit / Delete =====
+
+            // Show inline edit textarea for a comment
+            // idx = $index() from Knockout (reliable DOM key)
+            // currentContent = the comment text to pre-fill
+            self.startEdit = function(idx, currentContent) {
+                var textEl  = document.getElementById('comment-text-'       + idx);
+                var editEl  = document.getElementById('comment-edit-'       + idx);
+                var inputEl = document.getElementById('comment-edit-input-' + idx);
+
+                if (textEl)  textEl.style.display = 'none';
+                if (editEl)  editEl.style.display  = 'block';
+                if (inputEl) {
+                    inputEl.value = currentContent;
+                    inputEl.focus();
+                }
+            };
+
+            // Cancel edit — restore view mode
+            self.cancelEdit = function(idx) {
+                var textEl = document.getElementById('comment-text-' + idx);
+                var editEl = document.getElementById('comment-edit-' + idx);
+                if (textEl) textEl.style.display = '';
+                if (editEl) editEl.style.display  = 'none';
+            };
+
+            // Save edited comment via AJAX
+            // commentId = real DB id for the AJAX call
+            // idx       = $index() for DOM lookup
+            self.saveComment = function(commentId, idx) {
+                var inputEl    = document.getElementById('comment-edit-input-' + idx);
+                var newContent = inputEl ? inputEl.value.trim() : '';
+
+                if (!newContent) return;
+
+                var formData = new FormData();
+                formData.append('comment_id', commentId);
+                formData.append('content', newContent);
+
+                fetch('/dashboard/edit_comment', { method: 'POST', body: formData })
+                .then(function(res) { return res.json(); })
+                .then(function(data) {
+                    if (data.success) {
+                        // Update the visible text paragraph in the DOM
+                        var textEl = document.getElementById('comment-text-' + idx);
+                        if (textEl) textEl.textContent = data.content;
+
+                        // Also update the underlying data object so re-renders are correct
+                        var emp = self.selectedEmployee();
+                        if (emp && emp.comments[idx]) {
+                            emp.comments[idx].content = data.content;
+                        }
+                        self.cancelEdit(idx);
+                    } else {
+                        alert(data.error || 'Failed to update comment.');
+                    }
+                })
+                .catch(function() { alert('Network error. Please try again.'); });
+            };
+
+            // Delete a comment via AJAX and remove it from the list
+            self.deleteComment = function(commentId, index) {
+                if (!confirm('Delete this comment?')) return;
+
+                var formData = new FormData();
+                formData.append('comment_id', commentId);
+
+                fetch('/dashboard/delete_comment', { method: 'POST', body: formData })
+                .then(function(res) { return res.json(); })
+                .then(function(data) {
+                    if (data.success) {
+                        var emp = self.selectedEmployee();
+                        if (emp) {
+                            emp.comments.splice(index, 1);
+                            // Force Knockout re-render
+                            self.selectedEmployee(null);
+                            self.selectedEmployee(emp);
+                        }
+                    } else {
+                        alert(data.error || 'Failed to delete comment.');
+                    }
+                })
+                .catch(function() { alert('Network error. Please try again.'); });
+            };
 
             // ===== Active Filter Detection =====
             self.hasActiveFilters = ko.computed(function() {
