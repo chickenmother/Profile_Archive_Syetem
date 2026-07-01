@@ -159,6 +159,18 @@ body {
     background: rgba(255,255,255,0.25);
 }
 
+/* Active state — red with ✕, shown when any filter is applied */
+.filter-toggle-btn.filter-btn-active {
+    background: #e53935;
+    border-color: #c62828;
+    color: #ffffff;
+    transition: background-color 0.2s, border-color 0.2s;
+}
+
+.filter-toggle-btn.filter-btn-active:hover {
+    background: #c62828;
+}
+
 .filter-select {
     background-color: #ffffff;
     border: 1px solid #cccccc;
@@ -193,6 +205,108 @@ body {
     transform: translateY(-50%);
     color: #888888;
     font-size: 0.9rem;
+}
+
+/* ===== 4b. CHECKBOX FILTER PANELS ===== */
+
+/* Wrapper — relative so the panel can drop below it */
+.checkbox-filter-wrapper {
+    position: relative;
+    flex-shrink: 0;
+}
+
+/* The toggle button — styled to match the toolbar */
+.checkbox-filter-btn {
+    background-color: #ffffff;
+    border: 1px solid #cccccc;
+    padding: 8px 12px;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    white-space: nowrap;
+    color: var(--dark-text);
+    font-family: var(--font-stack);
+    font-weight: 500;
+    transition: border-color 0.2s, background-color 0.2s;
+    min-width: 120px;
+}
+
+.checkbox-filter-btn:hover,
+.checkbox-filter-wrapper.active .checkbox-filter-btn {
+    border-color: #667eea;
+    background-color: #f5f6ff;
+}
+
+.checkbox-filter-chevron {
+    margin-left: auto;
+    font-size: 0.75rem;
+    color: #888;
+    transition: transform 0.2s;
+}
+
+.checkbox-filter-wrapper.active .checkbox-filter-chevron {
+    transform: rotate(180deg);
+}
+
+/* Floating dropdown panel */
+.checkbox-filter-panel {
+    display: none;
+    position: absolute;
+    top: calc(100% + 6px);
+    left: 0;
+    background: #ffffff;
+    border: 1px solid #e0e0e0;
+    border-radius: 10px;
+    box-shadow: var(--shadow-md);
+    padding: 8px 0;
+    min-width: 180px;
+    max-height: 260px;
+    overflow-y: auto;
+    z-index: 1200;
+}
+
+.checkbox-filter-panel.open {
+    display: block;
+}
+
+/* Scrollbar for the panel */
+.checkbox-filter-panel::-webkit-scrollbar {
+    width: 5px;
+}
+.checkbox-filter-panel::-webkit-scrollbar-track {
+    background: #f5f5f5;
+}
+.checkbox-filter-panel::-webkit-scrollbar-thumb {
+    background: #ccc;
+    border-radius: 3px;
+}
+
+/* Each checkbox row */
+.checkbox-filter-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 16px;
+    font-size: 0.85rem;
+    color: var(--dark-text);
+    cursor: pointer;
+    transition: background-color 0.15s;
+    user-select: none;
+}
+
+.checkbox-filter-item:hover {
+    background-color: #f5f6ff;
+}
+
+.checkbox-filter-item input[type="checkbox"] {
+    width: 15px;
+    height: 15px;
+    accent-color: #667eea;
+    cursor: pointer;
+    flex-shrink: 0;
 }
 
 /* ===== 5. DASHBOARD CONTAINER ===== */

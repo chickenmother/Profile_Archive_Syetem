@@ -150,22 +150,22 @@ INSERT INTO `skills` (`employee_id`, `skill_id`, `level`) VALUES
 (12, 4,  'intermediate');  -- David Kim: Java
 
 -- 7. Seed Certificates
--- certificate_id references config/certificates.php: 1=JLPT N1, 2=JLPT N2, 3=AWS Certified Solutions Architect, 4=基本情報技術者, 5=応用情報技術者, 6=TOEIC 700+
+-- certificate_id references config/certificates.php: 1=JLPT, 2=TOEIC,  3=基本情報技術者, 4=応用情報技術者, 5=AWS Certification, 6=Oracle Certification
 INSERT INTO `certificates` (`employee_id`, `certificate_id`, `level`, `scale`) VALUES
-(1,  1, 'expert',       'international'), -- Song Junran: JLPT N1
-(2,  3, 'expert',       'national'),      -- Alice Smith: AWS Certified Solutions Architect
-(3,  4, 'intermediate', 'local'),         -- Bob Jones: 基本情報技術者
-(4,  2, 'beginner',     'local'),         -- Yuki Tanaka: JLPT N2
-(5,  6, 'expert',       'international'), -- Maria Garcia: TOEIC 700+
-(5,  3, 'intermediate', 'national'),      -- Maria Garcia: AWS Certified Solutions Architect
-(6,  5, 'intermediate', 'national'),      -- Chen Wei: 応用情報技術者
-(7,  1, 'expert',       'international'), -- Hana Yamamoto: JLPT N1
-(7,  6, 'expert',       'international'), -- Hana Yamamoto: TOEIC 700+
-(9,  3, 'expert',       'national'),      -- Sara Nguyen: AWS Certified Solutions Architect
-(10, 4, 'beginner',     'local'),         -- Kenji Mori: 基本情報技術者
-(11, 6, 'expert',       'international'), -- Priya Sharma: TOEIC 700+
-(12, 5, 'expert',       'national'),      -- David Kim: 応用情報技術者
-(12, 3, 'expert',       'national');      -- David Kim: AWS Certified Solutions Architect
+(1,  1, 'N1',       'international'), -- Song Junran: JLPT
+(2,  5, 'Associate Solutions Architect',       'international'),      -- Alice Smith: AWS Certification (Associate Solutions Architect)
+(3,  3, '合格', 'national'),         -- Bob Jones: 基本情報技術者
+(4,  1, 'N2',     'international'),         -- Yuki Tanaka: JLPT N2
+(5,  2, '700+',       'international'), -- Maria Garcia: TOEIC
+(5,  5, 'Associate Solutions Architect', 'international'),      -- Maria Garcia: AWS Certification (Associate Solutions Architect)
+(6,  4, '合格', 'national'),      -- Chen Wei: 応用情報技術者
+(7,  1, 'N1',       'international'), -- Hana Yamamoto: JLPT
+(7,  2, '900+',       'international'), -- Hana Yamamoto: TOEIC (900+)
+(9,  5, 'Professional Solutions Architect',       'international'),      -- Sara Nguyen: AWS Certification (Professional Solutions Architect)
+(10, 3, '合格',     'national'),         -- Kenji Mori: 基本情報技術者
+(11, 2, '800+',       'international'), -- Priya Sharma: TOEIC (800+)
+(12, 4, '合格',       'national'),      -- David Kim: 応用情報技術者
+(12, 5, 'Professional Solutions Architect',       'international');      -- David Kim: AWS Certification (Professional Solutions Architect)
 
 -- 8. Seed Comments
 INSERT INTO `comments` (`author_id`, `receiver_id`, `content`) VALUES

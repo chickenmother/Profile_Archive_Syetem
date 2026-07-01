@@ -61,8 +61,9 @@
 
     <!-- ===== FILTER TOOLBAR STRIP (collapsible) ===== -->
     <div class="filter-toolbar-strip" id="filterStrip">
-        <button class="filter-toggle-btn" onclick="toggleFilters()">
-            <i class="fas fa-sliders-h"></i> Filters
+        <button class="filter-toggle-btn" id="clearFiltersBtn" onclick="clearFilters()">
+            <i class="fas fa-sliders-h" id="clearFiltersBtnIcon"></i>
+            <span id="clearFiltersBtnLabel">Filters</span>
         </button>
 
         <select class="filter-select" data-bind="value: selectedDepartment, event: { change: applyFilters }">
@@ -79,19 +80,39 @@
             <?php endforeach; ?>
         </select>
 
-        <select class="filter-select" data-bind="value: selectedSkill, event: { change: applyFilters }">
-            <option value="">All Skills</option>
-            <?php foreach ($skills as $skill): ?>
-            <option value="<?php echo $skill['id']; ?>"><?php echo $skill['name']; ?></option>
-            <?php endforeach; ?>
-        </select>
+        <!-- Skills Checkbox Dropdown -->
+        <div class="checkbox-filter-wrapper" id="skillsFilterWrapper">
+            <button class="checkbox-filter-btn" onclick="toggleCheckboxPanel('skillsPanel', 'skillsFilterWrapper')">
+                <i class="fas fa-code"></i>
+                <span id="skillsBtnLabel">Skills</span>
+                <i class="fas fa-chevron-down checkbox-filter-chevron" id="skillsChevron"></i>
+            </button>
+            <div class="checkbox-filter-panel" id="skillsPanel">
+                <?php foreach ($skills as $skill): ?>
+                <label class="checkbox-filter-item">
+                    <input type="checkbox" value="<?php echo $skill['id']; ?>" data-bind="checked: selectedSkills" onchange="viewModel && viewModel.applyFilters()">
+                    <?php echo $skill['name']; ?>
+                </label>
+                <?php endforeach; ?>
+            </div>
+        </div>
 
-        <select class="filter-select" data-bind="value: selectedCertificate, event: { change: applyFilters }">
-            <option value="">All Certificates</option>
-            <?php foreach ($certificates as $cert): ?>
-            <option value="<?php echo $cert['id']; ?>"><?php echo $cert['name']; ?></option>
-            <?php endforeach; ?>
-        </select>
+        <!-- Certificates Checkbox Dropdown -->
+        <div class="checkbox-filter-wrapper" id="certsFilterWrapper">
+            <button class="checkbox-filter-btn" onclick="toggleCheckboxPanel('certsPanel', 'certsFilterWrapper')">
+                <i class="fas fa-certificate"></i>
+                <span id="certsBtnLabel">Certificates</span>
+                <i class="fas fa-chevron-down checkbox-filter-chevron" id="certsChevron"></i>
+            </button>
+            <div class="checkbox-filter-panel" id="certsPanel">
+                <?php foreach ($certificates as $cert): ?>
+                <label class="checkbox-filter-item">
+                    <input type="checkbox" value="<?php echo $cert['id']; ?>" data-bind="checked: selectedCertificates" onchange="viewModel && viewModel.applyFilters()">
+                    <?php echo $cert['name']; ?>
+                </label>
+                <?php endforeach; ?>
+            </div>
+        </div>
 
         <select class="filter-select" data-bind="value: selectedYears, event: { change: applyFilters }">
             <option value="">All Tenures</option>
@@ -230,7 +251,7 @@
                 <h3 class="modal-section-title"><i class="fas fa-certificate"></i> Certificates</h3>
                 <div class="modal-badge-row">
                     <!-- ko foreach: certificates -->
-                    <span class="cert-badge" data-bind="css: { 'badge-expert': level === 'expert', 'badge-intermediate': level === 'intermediate', 'badge-beginner': level === 'beginner' }">
+                    <span class="cert-badge badge-expert">
                         <span data-bind="text: certsConfig[certificate_id] || 'Unknown'"></span>
                         <span class="cert-scale" data-bind="text: '(' + scale + ')'"></span>
                         <span class="badge-level" data-bind="text: '— ' + level"></span>
@@ -358,25 +379,53 @@
             });
 
             // ===== Reactive Filter Observables =====
-            self.selectedDepartment  = ko.observable('');
-            self.selectedPosition    = ko.observable('');
-            self.selectedSkill       = ko.observable('');
-            self.selectedCertificate = ko.observable('');
-            self.selectedYears       = ko.observable('');
-            self.searchText          = ko.observable('');
+            self.selectedDepartment    = ko.observable('');
+            self.selectedPosition      = ko.observable('');
+            self.selectedSkills        = ko.observableArray([]);   // multi-select
+            self.selectedCertificates  = ko.observableArray([]);   // multi-select
+            self.selectedYears         = ko.observable('');
+            self.searchText            = ko.observable('');
+
+            // Update button labels when checkbox selections change
+            self.selectedSkills.subscribe(function(vals) {
+                var label = vals.length > 0 ? 'Skills (' + vals.length + ')' : 'Skills';
+                document.getElementById('skillsBtnLabel').textContent = label;
+            });
+            self.selectedCertificates.subscribe(function(vals) {
+                var label = vals.length > 0 ? 'Certificates (' + vals.length + ')' : 'Certificates';
+                document.getElementById('certsBtnLabel').textContent = label;
+            });
 
             // ===== Computed Filtering Engine =====
             self.filteredEmployees = ko.computed(function() {
-                var dept   = self.selectedDepartment();
-                var pos    = self.selectedPosition();
-                var skill  = self.selectedSkill();
-                var cert   = self.selectedCertificate();
-                var years  = self.selectedYears();
-                var search = self.searchText().toLowerCase().trim();
+                var dept    = self.selectedDepartment();
+                var pos     = self.selectedPosition();
+                var skills  = self.selectedSkills();
+                var certs   = self.selectedCertificates();
+                var years   = self.selectedYears();
+                var search  = self.searchText().toLowerCase().trim();
 
                 return self.allEmployees.filter(function(emp) {
                     if (dept && dept !== "" && String(emp.department_id) !== dept) return false;
                     if (pos  && pos  !== "" && String(emp.position_id)   !== pos)  return false;
+
+                    // Skills: employee must have ALL of the checked skills
+                    if (skills.length > 0) {
+                        var empSkillIds = emp.skills.map(function(s) { return String(s.skill_id); });
+                        var hasAllSkills = skills.every(function(sid) {
+                            return empSkillIds.indexOf(sid) !== -1;
+                        });
+                        if (!hasAllSkills) return false;
+                    }
+
+                    // Certificates: employee must have ALL of the checked certs
+                    if (certs.length > 0) {
+                        var empCertIds = emp.certificates.map(function(c) { return String(c.certificate_id); });
+                        var hasAllCerts = certs.every(function(cid) {
+                            return empCertIds.indexOf(cid) !== -1;
+                        });
+                        if (!hasAllCerts) return false;
+                    }
 
                     if (years && years !== "") {
                         var y = parseInt(years);
@@ -430,16 +479,76 @@
             self.nextPage = function() { self.goToPage(self.currentPage() + 1); };
 
             self.applyFilters = function() { return true; };
+
+            // ===== Active Filter Detection =====
+            self.hasActiveFilters = ko.computed(function() {
+                return self.selectedDepartment()   !== ''  ||
+                       self.selectedPosition()     !== ''  ||
+                       self.selectedSkills().length  > 0   ||
+                       self.selectedCertificates().length > 0 ||
+                       self.selectedYears()        !== ''  ||
+                       self.searchText().trim()    !== '';
+            });
+
+            // Update the clear-filters button appearance reactively
+            self.hasActiveFilters.subscribe(function(active) {
+                var btn   = document.getElementById('clearFiltersBtn');
+                var icon  = document.getElementById('clearFiltersBtnIcon');
+                var label = document.getElementById('clearFiltersBtnLabel');
+                if (!btn) return;
+                if (active) {
+                    btn.classList.add('filter-btn-active');
+                    icon.className  = 'fas fa-times';
+                    label.textContent = 'Clear Filters';
+                } else {
+                    btn.classList.remove('filter-btn-active');
+                    icon.className  = 'fas fa-sliders-h';
+                    label.textContent = 'Filters';
+                }
+            });
         }
+
+        // ===== Checkbox Filter Panel Toggle =====
+        function toggleCheckboxPanel(panelId, wrapperId) {
+            var panel = document.getElementById(panelId);
+            var wrapper = document.getElementById(wrapperId);
+            var isOpen = panel.classList.contains('open');
+
+            // Close all other open panels first
+            document.querySelectorAll('.checkbox-filter-panel.open').forEach(function(p) {
+                p.classList.remove('open');
+            });
+            document.querySelectorAll('.checkbox-filter-wrapper.active').forEach(function(w) {
+                w.classList.remove('active');
+            });
+
+            if (!isOpen) {
+                panel.classList.add('open');
+                wrapper.classList.add('active');
+            }
+        }
+
+        // Close checkbox panels when clicking outside
+        document.addEventListener('click', function(e) {
+            if (!e.target.closest('.checkbox-filter-wrapper')) {
+                document.querySelectorAll('.checkbox-filter-panel.open').forEach(function(p) {
+                    p.classList.remove('open');
+                });
+                document.querySelectorAll('.checkbox-filter-wrapper.active').forEach(function(w) {
+                    w.classList.remove('active');
+                });
+            }
+        });
 
         function clearFilters() {
             viewModel.selectedDepartment('');
             viewModel.selectedPosition('');
-            viewModel.selectedSkill('');
-            viewModel.selectedCertificate('');
+            viewModel.selectedSkills([]);
+            viewModel.selectedCertificates([]);
             viewModel.selectedYears('');
             viewModel.searchText('');
             document.querySelectorAll('.filter-select').forEach(function(sel) { sel.selectedIndex = 0; });
+            document.querySelectorAll('.checkbox-filter-panel input[type="checkbox"]').forEach(function(cb) { cb.checked = false; });
             var searchInput = document.querySelector('.search-input-wrapper input');
             if (searchInput) searchInput.value = '';
         }
