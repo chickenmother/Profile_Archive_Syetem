@@ -69,6 +69,33 @@ body {
     background-color: rgba(255,255,255,0.15);
 }
 
+/* Top-right user avatar + name */
+.top-banner-user {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.top-banner-avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background-color: rgba(255,255,255,0.2);
+    background-size: cover;
+    background-position: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 1.1rem;
+    flex-shrink: 0;
+}
+
+.top-banner-username {
+    font-size: 0.9rem;
+    opacity: 0.9;
+}
+
 /* ===== 3. HAMBURGER DROPDOWN MENU (top right) ===== */
 .user-profile-menu-dropdown {
     position: absolute;
@@ -371,6 +398,8 @@ body {
     height: 55px;
     border-radius: 8px;
     background-color: rgba(255,255,255,0.25);
+    background-size: cover;
+    background-position: center;
     color: white;
     display: flex;
     align-items: center;
@@ -631,6 +660,8 @@ body {
     height: 80px;
     border-radius: 16px;
     background: linear-gradient(135deg, #00bfa5, #4fc3f7);
+    background-size: cover;
+    background-position: center;
     color: white;
     display: flex;
     align-items: center;

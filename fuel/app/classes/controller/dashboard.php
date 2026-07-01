@@ -80,10 +80,12 @@ class Controller_Dashboard extends Controller
         // Get logged-in user info for the top banner, including admin level
         $employee_id = Session::get('employee_id');
         $admin_level = Model_Employee::get_admin_level($employee_id);
+        $current_employee = Model_Employee::find_by_id($employee_id);
         $current_user = array(
             'id'          => $employee_id,
             'name'        => Session::get('employee_name'),
             'admin_level' => $admin_level,
+            'avatar'      => !empty($current_employee['avatar']) ? '/assets/uploads/avatars/' . $current_employee['avatar'] : null,
         );
 
         // Pass everything to the view

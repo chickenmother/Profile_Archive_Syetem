@@ -14,7 +14,14 @@
     <div class="top-banner">
         <h1><i class="fas fa-address-book"></i> Profile Archive System</h1>
         <div style="display: flex; align-items: center; gap: 0.8rem;">
-            <span style="font-size: 0.9rem; opacity: 0.9;"><i class="fas fa-user-circle"></i> <?php echo $current_user['name']; ?></span>
+            <div class="top-banner-user">
+                <?php if (!empty($current_user['avatar'])): ?>
+                <div class="top-banner-avatar" style="background-image: url('<?php echo $current_user['avatar']; ?>');"></div>
+                <?php else: ?>
+                <div class="top-banner-avatar"><i class="fas fa-user-circle"></i></div>
+                <?php endif; ?>
+                <span class="top-banner-username"><?php echo $current_user['name']; ?></span>
+            </div>
             <button class="hamburger-btn" id="hamburgerBtn" onclick="toggleDropdown()">
                 <i class="fas fa-bars"></i>
             </button>
@@ -23,9 +30,9 @@
 
     <!-- ===== HAMBURGER DROPDOWN MENU ===== -->
     <div class="user-profile-menu-dropdown" id="menuDropdown">
-        <button class="dropdown-nav-item" onclick="alert('My Profile - coming soon!')">
+        <a href="/profile" class="dropdown-nav-item">
             <span><i class="fas fa-user-circle"></i> My Profile</span>
-        </button>
+        </a>
         <?php if ($current_user['admin_level'] >= 3): ?>
         <button class="dropdown-nav-item" onclick="alert('Project Management - coming soon!')">
             <span><i class="fas fa-project-diagram"></i> Project</span>
@@ -137,7 +144,7 @@
                 <!-- Card Top: Identity -->
                 <div class="card-top-identity">
                     <div class="profile-avatar-block">
-                        <div class="card-avatar" data-bind="text: initials"></div>
+                        <div class="card-avatar" data-bind="text: avatarUrl ? '' : initials, style: { backgroundImage: avatarUrl ? 'url(' + avatarUrl + ')' : 'none' }"></div>
                         <div>
                             <h3 data-bind="text: name"></h3>
                             <p data-bind="text: position_name"></p>
@@ -209,7 +216,7 @@
 
             <!-- ① Modal Header: Avatar + Identity -->
             <div class="modal-header-section">
-                <div class="modal-avatar" data-bind="text: initials"></div>
+                <div class="modal-avatar" data-bind="text: avatarUrl ? '' : initials, style: { backgroundImage: avatarUrl ? 'url(' + avatarUrl + ')' : 'none' }"></div>
                 <div class="modal-identity">
                     <h2 data-bind="text: name"></h2>
                     <p class="modal-position" data-bind="text: position_name"></p>
@@ -375,6 +382,7 @@
                 emp.certificates      = emp.certificates || [];
                 emp.projects          = emp.projects || [];
                 emp.comments          = emp.comments || [];
+                emp.avatarUrl         = emp.avatar ? '/assets/uploads/avatars/' + emp.avatar : null;
 
                 // Compute initials
                 var parts = emp.name.trim().split(' ');

@@ -173,4 +173,116 @@ class Model_Employee extends Model
             ->execute();
         return $affected > 0;
     }
+
+    // === Profile Page related methods ===
+
+    // Get a single employee's full data (basic info + department/position names)
+    public static function find_by_id($employee_id)
+    {
+        return DB::query("SELECT e.*, d.name AS department_name, p.name AS position_name
+            FROM employees e
+            LEFT JOIN departments d ON e.department_id = d.id
+            LEFT JOIN positions p ON e.position_id = p.id
+            WHERE e.id = :id")
+            ->param('id', $employee_id)
+            ->execute()
+            ->current();
+    }
+
+    // Update the employee's self-introduction text
+    public static function update_introduction($employee_id, $introduction)
+    {
+        DB::update('employees')
+            ->set(['introduction' => $introduction])
+            ->where('id', '=', $employee_id)
+            ->execute();
+    }
+
+    // Update the employee's avatar filename
+    public static function update_avatar($employee_id, $filename)
+    {
+        DB::update('employees')
+            ->set(['avatar' => $filename])
+            ->where('id', '=', $employee_id)
+            ->execute();
+    }
+
+    // Add a new skill entry for an employee
+    public static function add_skill($employee_id, $skill_id, $level)
+    {
+        list($insert_id) = DB::insert('skills')
+            ->columns(['employee_id', 'skill_id', 'level'])
+            ->values([$employee_id, $skill_id, $level])
+            ->execute();
+        return $insert_id;
+    }
+
+    // Remove a skill entry (only if it belongs to the employee)
+    public static function remove_skill($skill_row_id, $employee_id)
+    {
+        $affected = DB::delete('skills')
+            ->where('id', '=', $skill_row_id)
+            ->where('employee_id', '=', $employee_id)
+            ->execute();
+        return $affected > 0;
+    }
+
+    // Add a new certificate entry for an employee
+    public static function add_certificate($employee_id, $certificate_id, $level, $scale)
+    {
+        list($insert_id) = DB::insert('certificates')
+            ->columns(['employee_id', 'certificate_id', 'level', 'scale'])
+            ->values([$employee_id, $certificate_id, $level, $scale])
+            ->execute();
+        return $insert_id;
+    }
+
+    // Remove a certificate entry (only if it belongs to the employee)
+    public static function remove_certificate($cert_row_id, $employee_id)
+    {
+        $affected = DB::delete('certificates')
+            ->where('id', '=', $cert_row_id)
+            ->where('employee_id', '=', $employee_id)
+            ->execute();
+        return $affected > 0;
+    }
+
+    // Get full profile data WITH row ids for skills/certs (needed for remove buttons)
+    public static function get_own_profile_data($employee_id)
+    {
+        // Skills: include row id so it can be individually removed
+        $skills = DB::query(
+            "SELECT id AS row_id, skill_id, level FROM skills WHERE employee_id = :id"
+        )->param('id', $employee_id)->execute()->as_array();
+
+        // Certificates: include row id so it can be individually removed
+        $certificates = DB::query(
+            "SELECT id AS row_id, certificate_id, level, scale FROM certificates WHERE employee_id = :id"
+        )->param('id', $employee_id)->execute()->as_array();
+
+        // Projects: view-only, via junction table
+        $projects = DB::query(
+            "SELECT p.name, p.status, p.start_date, p.end_date, p.leader_name
+             FROM projects p
+             JOIN employeesProjects ep ON p.id = ep.project_id
+             WHERE ep.employee_id = :id
+             ORDER BY p.start_date DESC"
+        )->param('id', $employee_id)->execute()->as_array();
+
+        // Comments received from colleagues
+        $comments = DB::query(
+            "SELECT c.id AS comment_id, c.author_id, c.content, c.create_time, e.name AS author_name
+             FROM comments c
+             JOIN employees e ON c.author_id = e.id
+             WHERE c.receiver_id = :id
+             ORDER BY c.create_time DESC"
+        )->param('id', $employee_id)->execute()->as_array();
+
+        return array(
+            'skills'       => $skills,
+            'certificates' => $certificates,
+            'projects'     => $projects,
+            'comments'     => $comments,
+        );
+    }
 }

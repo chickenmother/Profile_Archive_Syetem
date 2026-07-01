@@ -1,0 +1,346 @@
+/* ==========================================================================
+   PROFILE PAGE CSS — Profile Archive System
+   Extends dashboard.css variables and base styles
+   ========================================================================== */
+
+/* ===== Back to Dashboard button ===== */
+.back-to-dashboard-btn {
+    background: rgba(255,255,255,0.15);
+    border: 1px solid rgba(255,255,255,0.3);
+    color: white;
+    padding: 8px 16px;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: background-color 0.2s;
+}
+
+.back-to-dashboard-btn:hover {
+    background: rgba(255,255,255,0.25);
+    color: white;
+}
+
+/* ===== Page Container ===== */
+.profile-page-container {
+    padding: 30px;
+    max-width: 900px;
+    margin: 0 auto;
+    width: 100%;
+}
+
+.profile-page-panel {
+    background-color: #ffffff;
+    border-radius: 16px;
+    box-shadow: var(--shadow-sm);
+    padding: 32px;
+    border: 1px solid #e8e8e8;
+}
+
+/* ===== Header: Avatar + Identity ===== */
+.profile-page-header {
+    display: flex;
+    gap: 24px;
+    align-items: flex-start;
+    margin-bottom: 28px;
+    padding-bottom: 24px;
+    border-bottom: 2px solid #f0f0f0;
+    position: relative;
+    flex-wrap: wrap;
+}
+
+.avatar-upload-wrapper {
+    position: relative;
+    flex-shrink: 0;
+}
+
+.profile-page-avatar {
+    width: 110px;
+    height: 110px;
+    border-radius: 20px;
+    background: linear-gradient(135deg, #00bfa5, #4fc3f7);
+    background-size: cover;
+    background-position: center;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2.2rem;
+    font-weight: 700;
+}
+
+.avatar-upload-btn {
+    position: absolute;
+    bottom: -6px;
+    right: -6px;
+    width: 34px;
+    height: 34px;
+    background: #667eea;
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    border: 3px solid #ffffff;
+    font-size: 0.85rem;
+    transition: background-color 0.2s;
+}
+
+.avatar-upload-btn:hover {
+    background: #5a6fd6;
+}
+
+.avatar-upload-msg {
+    position: absolute;
+    left: 0;
+    bottom: -20px;
+    font-size: 0.78rem;
+    color: var(--teal-profile);
+    font-weight: 600;
+    margin: 0;
+}
+
+.profile-page-identity {
+    flex: 1;
+    min-width: 200px;
+}
+
+.profile-page-identity h2 {
+    font-size: 1.7rem;
+    font-weight: 700;
+    color: var(--dark-text);
+    margin: 0 0 6px 0;
+}
+
+.profile-page-position {
+    font-size: 1.05rem;
+    color: var(--teal-profile);
+    font-weight: 600;
+    margin: 0 0 8px 0;
+}
+
+.profile-page-department,
+.profile-page-hire-date {
+    font-size: 0.88rem;
+    color: var(--muted-text);
+    margin: 4px 0;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+/* ===== Generic Section ===== */
+.profile-page-section {
+    margin-bottom: 30px;
+}
+
+.profile-section-title {
+    font-size: 0.85rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    color: var(--muted-text);
+    margin: 0 0 14px 0;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.section-subtitle {
+    text-transform: none;
+    font-weight: 400;
+    font-size: 0.75rem;
+    letter-spacing: 0;
+    opacity: 0.75;
+    margin-left: 4px;
+}
+
+.profile-empty-note {
+    font-size: 0.88rem;
+    color: var(--muted-text);
+    font-style: italic;
+}
+
+/* ===== Self-Introduction ===== */
+.profile-intro-textarea {
+    width: 100%;
+    border: 1px solid #e0e0e0;
+    border-radius: 10px;
+    padding: 12px 16px;
+    font-size: 0.95rem;
+    font-family: var(--font-stack);
+    color: var(--dark-text);
+    resize: vertical;
+    outline: none;
+    transition: border-color 0.2s;
+    line-height: 1.6;
+}
+
+.profile-intro-textarea:focus {
+    border-color: var(--teal-profile);
+    box-shadow: 0 0 0 3px rgba(0, 191, 165, 0.1);
+}
+
+.profile-section-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 10px;
+    gap: 12px;
+}
+
+.profile-char-count {
+    font-size: 0.78rem;
+    color: var(--muted-text);
+}
+
+.profile-save-btn,
+.profile-add-btn {
+    background: linear-gradient(135deg, #00bfa5, #4fc3f7);
+    color: #ffffff;
+    border: none;
+    border-radius: 8px;
+    padding: 9px 20px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    font-family: var(--font-stack);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: opacity 0.2s;
+    white-space: nowrap;
+}
+
+.profile-save-btn:hover,
+.profile-add-btn:hover {
+    opacity: 0.88;
+}
+
+.profile-section-msg {
+    font-size: 0.82rem;
+    margin: 8px 0 0 0;
+    min-height: 1.2em;
+    color: #2e7d32;
+}
+
+/* ===== Skill & Certificate Badges (with remove button) ===== */
+.profile-badge-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 16px;
+}
+
+.badge-remove-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0 0 0 4px;
+    font-size: 0.7rem;
+    opacity: 0.6;
+    color: inherit;
+    transition: opacity 0.15s;
+}
+
+.badge-remove-btn:hover {
+    opacity: 1;
+}
+
+/* ===== Add Skill/Certificate Form ===== */
+.profile-add-form {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    align-items: center;
+}
+
+.profile-add-select,
+.profile-add-input {
+    padding: 8px 12px;
+    border: 1px solid #cccccc;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    font-family: var(--font-stack);
+    outline: none;
+    min-width: 160px;
+}
+
+.profile-add-select:focus,
+.profile-add-input:focus {
+    border-color: var(--teal-profile);
+}
+
+/* ===== Projects (View Only) ===== */
+.profile-project-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.profile-project-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #f8f9fa;
+    border-radius: 10px;
+    padding: 14px 18px;
+    gap: 12px;
+}
+
+.profile-project-row .project-info {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    flex: 1;
+    min-width: 0;
+}
+
+.profile-project-row .project-name {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--dark-text);
+}
+
+.profile-project-row .project-leader {
+    font-size: 0.8rem;
+    color: var(--teal-profile);
+    font-weight: 500;
+}
+
+.profile-project-row .project-dates {
+    font-size: 0.78rem;
+    color: var(--muted-text);
+}
+
+/* ===== Responsive ===== */
+@media (max-width: 768px) {
+    .profile-page-container {
+        padding: 15px;
+    }
+
+    .profile-page-panel {
+        padding: 20px;
+    }
+
+    .profile-page-header {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+    }
+
+    .profile-add-form {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .profile-add-select,
+    .profile-add-input {
+        width: 100%;
+        min-width: unset;
+    }
+}
