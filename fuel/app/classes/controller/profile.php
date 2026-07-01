@@ -35,12 +35,11 @@ class Controller_Profile extends Controller
         $employee_id = Session::get('employee_id');
 
         $employee = Model_Employee::find_by_id($employee_id);
-        $profile_data = Model_Employee::get_own_profile_data($employee_id);
 
-        $employee['skills']       = $profile_data['skills'];
-        $employee['certificates'] = $profile_data['certificates'];
-        $employee['projects']     = $profile_data['projects'];
-        $employee['comments']     = $profile_data['comments'];
+        $employee['skills']       = Model_Skill::get_by_employee_with_row_id($employee_id);
+        $employee['certificates'] = Model_Certificate::get_by_employee_with_row_id($employee_id);
+        $employee['projects']     = Model_Project::get_by_employee($employee_id);
+        $employee['comments']     = Model_Comment::get_received_by_employee($employee_id);
 
         // Load skill & certificate config files (id => name maps)
         try {
@@ -54,7 +53,7 @@ class Controller_Profile extends Controller
             $certificates_config = array();
         }
 
-        $admin_level = Model_Employee::get_admin_level($employee_id);
+        $admin_level = Model_Position::get_admin_level($employee_id);
         $current_user = array(
             'id'          => $employee_id,
             'name'        => Session::get('employee_name'),
@@ -183,7 +182,7 @@ class Controller_Profile extends Controller
             return Response::forge(json_encode(['success' => false, 'error' => 'Invalid skill or level']), 400, ['Content-Type' => 'application/json']);
         }
 
-        $row_id = Model_Employee::add_skill($employee_id, $skill_id, $level);
+        $row_id = Model_Skill::add($employee_id, $skill_id, $level);
 
         return Response::forge(json_encode([
             'success' => true,
@@ -207,7 +206,7 @@ class Controller_Profile extends Controller
             return Response::forge(json_encode(['success' => false, 'error' => 'Not authenticated']), 401, ['Content-Type' => 'application/json']);
         }
 
-        $ok = Model_Employee::remove_skill($row_id, $employee_id);
+        $ok = Model_Skill::remove($row_id, $employee_id);
 
         if (!$ok) {
             return Response::forge(json_encode(['success' => false, 'error' => 'Could not remove skill']), 403, ['Content-Type' => 'application/json']);
@@ -237,7 +236,7 @@ class Controller_Profile extends Controller
             return Response::forge(json_encode(['success' => false, 'error' => 'Invalid certificate, level, or scale']), 400, ['Content-Type' => 'application/json']);
         }
 
-        $row_id = Model_Employee::add_certificate($employee_id, $certificate_id, $level, $scale);
+        $row_id = Model_Certificate::add($employee_id, $certificate_id, $level, $scale);
 
         return Response::forge(json_encode([
             'success'     => true,
@@ -261,7 +260,7 @@ class Controller_Profile extends Controller
             return Response::forge(json_encode(['success' => false, 'error' => 'Not authenticated']), 401, ['Content-Type' => 'application/json']);
         }
 
-        $ok = Model_Employee::remove_certificate($row_id, $employee_id);
+        $ok = Model_Certificate::remove($row_id, $employee_id);
 
         if (!$ok) {
             return Response::forge(json_encode(['success' => false, 'error' => 'Could not remove certificate']), 403, ['Content-Type' => 'application/json']);

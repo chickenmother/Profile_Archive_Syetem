@@ -40,20 +40,25 @@ class Controller_Dashboard extends Controller
 
         // Enrich each employee with full profile data (skills, certs, projects, comments)
         for ($i = 0; $i < count($employees); $i++) {
-            $profile = Model_Employee::get_profile_data($employees[$i]['id']);
-            $employees[$i]['skills']       = $profile['skills'];
-            $employees[$i]['certificates'] = $profile['certificates'];
-            $employees[$i]['projects']     = $profile['projects'];
-            $employees[$i]['comments']     = $profile['comments'];
+            $emp_id = $employees[$i]['id'];
+            $skills       = Model_Skill::get_by_employee($emp_id);
+            $certificates = Model_Certificate::get_by_employee($emp_id);
+            $projects     = Model_Project::get_by_employee($emp_id);
+            $comments     = Model_Comment::get_received_by_employee($emp_id);
+
+            $employees[$i]['skills']       = $skills;
+            $employees[$i]['certificates'] = $certificates;
+            $employees[$i]['projects']     = $projects;
+            $employees[$i]['comments']     = $comments;
             // Real counts from actual data
-            $employees[$i]['project_count']     = count($profile['projects']);
-            $employees[$i]['skill_count']        = count($profile['skills']);
-            $employees[$i]['certificate_count']  = count($profile['certificates']);
+            $employees[$i]['project_count']     = count($projects);
+            $employees[$i]['skill_count']        = count($skills);
+            $employees[$i]['certificate_count']  = count($certificates);
         }
 
         // Get filter dropdown options
-        $departments = Model_Employee::get_departments();
-        $positions = Model_Employee::get_positions();
+        $departments = Model_Department::get_all();
+        $positions = Model_Position::get_all();
 
         // Load skill & certificate config files directly
         try {
@@ -79,7 +84,7 @@ class Controller_Dashboard extends Controller
 
         // Get logged-in user info for the top banner, including admin level
         $employee_id = Session::get('employee_id');
-        $admin_level = Model_Employee::get_admin_level($employee_id);
+        $admin_level = Model_Position::get_admin_level($employee_id);
         $current_employee = Model_Employee::find_by_id($employee_id);
         $current_user = array(
             'id'          => $employee_id,
@@ -133,7 +138,7 @@ class Controller_Dashboard extends Controller
             return Response::forge(json_encode(['success' => false, 'error' => 'Comment must be 500 characters or fewer']), 400, ['Content-Type' => 'application/json']);
         }
 
-        $comment = Model_Employee::post_comment($author_id, $receiver_id, $content);
+        $comment = Model_Comment::post($author_id, $receiver_id, $content);
 
         return Response::forge(json_encode(['success' => true, 'comment' => $comment]), 200, ['Content-Type' => 'application/json']);
     }
@@ -163,7 +168,7 @@ class Controller_Dashboard extends Controller
             return Response::forge(json_encode(['success' => false, 'error' => 'Comment must be 500 characters or fewer']), 400, ['Content-Type' => 'application/json']);
         }
 
-        $ok = Model_Employee::update_comment($comment_id, $author_id, $content);
+        $ok = Model_Comment::update($comment_id, $author_id, $content);
 
         if (!$ok) {
             return Response::forge(json_encode(['success' => false, 'error' => 'Could not update comment. You may not be the author.']), 403, ['Content-Type' => 'application/json']);
@@ -190,7 +195,7 @@ class Controller_Dashboard extends Controller
             return Response::forge(json_encode(['success' => false, 'error' => 'Not authenticated']), 401, ['Content-Type' => 'application/json']);
         }
 
-        $ok = Model_Employee::delete_comment($comment_id, $author_id);
+        $ok = Model_Comment::delete($comment_id, $author_id);
 
         if (!$ok) {
             return Response::forge(json_encode(['success' => false, 'error' => 'Could not delete comment. You may not be the author.']), 403, ['Content-Type' => 'application/json']);
