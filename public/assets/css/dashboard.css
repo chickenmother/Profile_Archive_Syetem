@@ -69,6 +69,33 @@ body {
     background-color: rgba(255,255,255,0.15);
 }
 
+/* Top-right user avatar + name */
+.top-banner-user {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.top-banner-avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background-color: rgba(255,255,255,0.2);
+    background-size: cover;
+    background-position: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 1.1rem;
+    flex-shrink: 0;
+}
+
+.top-banner-username {
+    font-size: 0.9rem;
+    opacity: 0.9;
+}
+
 /* ===== 3. HAMBURGER DROPDOWN MENU (top right) ===== */
 .user-profile-menu-dropdown {
     position: absolute;
@@ -159,6 +186,18 @@ body {
     background: rgba(255,255,255,0.25);
 }
 
+/* Active state — red with ✕, shown when any filter is applied */
+.filter-toggle-btn.filter-btn-active {
+    background: #e53935;
+    border-color: #c62828;
+    color: #ffffff;
+    transition: background-color 0.2s, border-color 0.2s;
+}
+
+.filter-toggle-btn.filter-btn-active:hover {
+    background: #c62828;
+}
+
 .filter-select {
     background-color: #ffffff;
     border: 1px solid #cccccc;
@@ -195,12 +234,123 @@ body {
     font-size: 0.9rem;
 }
 
+/* ===== 4b. CHECKBOX FILTER PANELS ===== */
+
+/* Wrapper — relative so the panel can drop below it */
+.checkbox-filter-wrapper {
+    position: relative;
+    flex-shrink: 0;
+}
+
+/* The toggle button — styled to match the toolbar */
+.checkbox-filter-btn {
+    background-color: #ffffff;
+    border: 1px solid #cccccc;
+    padding: 8px 12px;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    white-space: nowrap;
+    color: var(--dark-text);
+    font-family: var(--font-stack);
+    font-weight: 500;
+    transition: border-color 0.2s, background-color 0.2s;
+    min-width: 120px;
+}
+
+.checkbox-filter-btn:hover,
+.checkbox-filter-wrapper.active .checkbox-filter-btn {
+    border-color: #667eea;
+    background-color: #f5f6ff;
+}
+
+.checkbox-filter-chevron {
+    margin-left: auto;
+    font-size: 0.75rem;
+    color: #888;
+    transition: transform 0.2s;
+}
+
+.checkbox-filter-wrapper.active .checkbox-filter-chevron {
+    transform: rotate(180deg);
+}
+
+/* Floating dropdown panel */
+.checkbox-filter-panel {
+    display: none;
+    position: absolute;
+    top: calc(100% + 6px);
+    left: 0;
+    background: #ffffff;
+    border: 1px solid #e0e0e0;
+    border-radius: 10px;
+    box-shadow: var(--shadow-md);
+    padding: 8px 0;
+    min-width: 180px;
+    max-height: 260px;
+    overflow-y: auto;
+    z-index: 1200;
+}
+
+.checkbox-filter-panel.open {
+    display: block;
+}
+
+/* Scrollbar for the panel */
+.checkbox-filter-panel::-webkit-scrollbar {
+    width: 5px;
+}
+.checkbox-filter-panel::-webkit-scrollbar-track {
+    background: #f5f5f5;
+}
+.checkbox-filter-panel::-webkit-scrollbar-thumb {
+    background: #ccc;
+    border-radius: 3px;
+}
+
+/* Each checkbox row */
+.checkbox-filter-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 16px;
+    font-size: 0.85rem;
+    color: var(--dark-text);
+    cursor: pointer;
+    transition: background-color 0.15s;
+    user-select: none;
+}
+
+.checkbox-filter-item:hover {
+    background-color: #f5f6ff;
+}
+
+.checkbox-filter-item input[type="checkbox"] {
+    width: 15px;
+    height: 15px;
+    accent-color: #667eea;
+    cursor: pointer;
+    flex-shrink: 0;
+}
+
 /* ===== 5. DASHBOARD CONTAINER ===== */
 .dashboard-container {
     padding: 30px;
     max-width: 1400px;
     margin: 0 auto;
     width: 100%;
+}
+
+/* Grid wrapper panel — always visible, cards and pagination sit inside */
+.grid-panel {
+    background-color: #ffffff;
+    border-radius: 16px;
+    box-shadow: var(--shadow-sm);
+    padding: 24px;
+    border: 1px solid #e8e8e8;
 }
 
 /* ===== 6. EMPLOYEE CARD GRID ===== */
@@ -248,6 +398,8 @@ body {
     height: 55px;
     border-radius: 8px;
     background-color: rgba(255,255,255,0.25);
+    background-size: cover;
+    background-position: center;
     color: white;
     display: flex;
     align-items: center;
@@ -342,13 +494,10 @@ body {
     letter-spacing: 0.3px;
 }
 
-/* No Results */
+/* No Results — spans full grid width inside the grid-panel */
 .empty-grid-fallback {
     text-align: center;
     padding: 80px 20px;
-    background-color: #ffffff;
-    border-radius: 12px;
-    box-shadow: var(--shadow-sm);
     grid-column: 1 / -1;
 }
 
@@ -358,7 +507,550 @@ body {
     margin: 0;
 }
 
-/* ===== 7. RESPONSIVE ===== */
+/* ===== 7. PAGINATION BAR ===== */
+.pagination-bar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 28px;
+    flex-wrap: wrap;
+}
+
+.page-btn {
+    min-width: 38px;
+    height: 38px;
+    padding: 0 10px;
+    border: 1px solid #d0d0d0;
+    border-radius: 8px;
+    background-color: #ffffff;
+    color: var(--dark-text);
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.15s, border-color 0.15s, color 0.15s;
+    font-family: var(--font-stack);
+}
+
+.page-btn:hover:not(:disabled) {
+    background-color: #f0f2f5;
+    border-color: #aaa;
+}
+
+.page-btn:disabled {
+    opacity: 0.35;
+    cursor: not-allowed;
+}
+
+.page-btn-active {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: #ffffff;
+    border-color: transparent;
+}
+
+.page-btn-active:hover {
+    background: linear-gradient(135deg, #5a6fd6 0%, #6a3f96 100%);
+}
+
+.page-nav {
+    color: var(--muted-text);
+}
+
+.page-info {
+    font-size: 0.82rem;
+    color: var(--muted-text);
+    margin-left: 8px;
+    white-space: nowrap;
+}
+
+/* ===== 8. PROFILE MODAL ===== */
+
+/* Overlay — blurs and darkens the entire background */
+.profile-modal-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 2000;
+    background: rgba(0, 0, 0, 0.55);
+    backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    animation: overlayFadeIn 0.2s ease;
+}
+
+@keyframes overlayFadeIn {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+}
+
+/* Modal Panel — centered white card */
+.profile-modal-panel {
+    background: #ffffff;
+    border-radius: 20px;
+    width: 100%;
+    max-width: 620px;
+    max-height: 88vh;
+    overflow-y: auto;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    position: relative;
+    padding: 32px;
+    animation: modalSlideIn 0.25s ease;
+}
+
+@keyframes modalSlideIn {
+    from { opacity: 0; transform: translateY(-24px) scale(0.97); }
+    to   { opacity: 1; transform: translateY(0)     scale(1);    }
+}
+
+/* Scrollbar styling for modal */
+.profile-modal-panel::-webkit-scrollbar {
+    width: 6px;
+}
+.profile-modal-panel::-webkit-scrollbar-track {
+    background: #f0f0f0;
+    border-radius: 3px;
+}
+.profile-modal-panel::-webkit-scrollbar-thumb {
+    background: #cccccc;
+    border-radius: 3px;
+}
+
+/* Close button — top right corner */
+.modal-close-btn {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    background: #f0f0f0;
+    border: none;
+    border-radius: 50%;
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 1rem;
+    color: #555;
+    transition: background-color 0.2s, color 0.2s;
+    z-index: 10;
+}
+
+.modal-close-btn:hover {
+    background: #e0e0e0;
+    color: #222;
+}
+
+/* ① Modal Header */
+.modal-header-section {
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+    margin-bottom: 24px;
+    padding-bottom: 20px;
+    border-bottom: 2px solid #f0f0f0;
+}
+
+.modal-avatar {
+    width: 80px;
+    height: 80px;
+    border-radius: 16px;
+    background: linear-gradient(135deg, #00bfa5, #4fc3f7);
+    background-size: cover;
+    background-position: center;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.8rem;
+    font-weight: 700;
+    flex-shrink: 0;
+}
+
+.modal-identity h2 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--dark-text);
+    margin: 0 0 4px 0;
+}
+
+.modal-position {
+    font-size: 1rem;
+    color: var(--teal-profile);
+    font-weight: 600;
+    margin: 0 0 6px 0;
+}
+
+.modal-department,
+.modal-hire-date {
+    font-size: 0.85rem;
+    color: var(--muted-text);
+    margin: 3px 0;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+/* ② Generic Section */
+.modal-section {
+    margin-bottom: 22px;
+}
+
+.modal-section-title {
+    font-size: 0.8rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    color: var(--muted-text);
+    margin: 0 0 10px 0;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.modal-about-text {
+    font-size: 0.95rem;
+    line-height: 1.6;
+    color: var(--dark-text);
+    margin: 0;
+}
+
+/* ③ Skill & Certificate Badges */
+.modal-badge-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.skill-badge,
+.cert-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 5px 14px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-transform: capitalize;
+}
+
+/* Level color coding */
+.badge-expert {
+    background: #e8f5e9;
+    color: #2e7d32;
+    border: 1px solid #a5d6a7;
+}
+
+.badge-intermediate {
+    background: #fff8e1;
+    color: #f57f17;
+    border: 1px solid #ffe082;
+}
+
+.badge-beginner {
+    background: #f5f5f5;
+    color: #616161;
+    border: 1px solid #e0e0e0;
+}
+
+.cert-scale {
+    font-size: 0.72rem;
+    opacity: 0.75;
+    font-weight: 400;
+}
+
+/* ⑤ Projects */
+.modal-project-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.modal-project-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #f8f9fa;
+    border-radius: 10px;
+    padding: 12px 16px;
+    gap: 12px;
+}
+
+.project-info {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    flex: 1;
+    min-width: 0;
+}
+
+.project-name {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--dark-text);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.project-dates {
+    font-size: 0.75rem;
+    color: var(--muted-text);
+}
+
+.project-status-chip {
+    padding: 4px 12px;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: capitalize;
+    flex-shrink: 0;
+}
+
+.status-ongoing {
+    background: #e0f7fa;
+    color: #00838f;
+}
+
+.status-completed {
+    background: #e8f5e9;
+    color: #2e7d32;
+}
+
+.status-planning {
+    background: #f3e5f5;
+    color: #6a1b9a;
+}
+
+/* ⑥ Comments */
+.modal-comments-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.modal-comment-block {
+    background: #f8f9fa;
+    border-left: 3px solid var(--teal-profile);
+    border-radius: 0 10px 10px 0;
+    padding: 12px 16px;
+}
+
+.comment-content {
+    font-size: 0.9rem;
+    line-height: 1.5;
+    color: var(--dark-text);
+    margin: 0 0 8px 0;
+    font-style: italic;
+}
+
+.comment-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+}
+
+.comment-author {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--teal-profile);
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.comment-date {
+    font-size: 0.75rem;
+    color: var(--muted-text);
+}
+
+/* ===== 9. COMMENT FORM ===== */
+
+.modal-no-comments {
+    font-size: 0.9rem;
+    color: var(--muted-text);
+    font-style: italic;
+    margin: 0 0 16px 0;
+}
+
+.comment-form-wrapper {
+    margin-top: 18px;
+    border-top: 1px solid #f0f0f0;
+    padding-top: 16px;
+}
+
+.comment-form-title {
+    font-size: 0.8rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    color: var(--muted-text);
+    margin: 0 0 10px 0;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.comment-textarea {
+    width: 100%;
+    border: 1px solid #e0e0e0;
+    border-radius: 10px;
+    padding: 10px 14px;
+    font-size: 0.9rem;
+    font-family: var(--font-stack);
+    color: var(--dark-text);
+    resize: vertical;
+    outline: none;
+    transition: border-color 0.2s;
+    line-height: 1.5;
+}
+
+.comment-textarea:focus {
+    border-color: var(--teal-profile);
+    box-shadow: 0 0 0 3px rgba(0, 191, 165, 0.1);
+}
+
+.comment-form-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 8px;
+    gap: 12px;
+}
+
+.comment-char-count {
+    font-size: 0.75rem;
+    color: var(--muted-text);
+    flex-shrink: 0;
+}
+
+.comment-submit-btn {
+    background: linear-gradient(135deg, #00bfa5, #4fc3f7);
+    color: #ffffff;
+    border: none;
+    border-radius: 8px;
+    padding: 8px 18px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    font-family: var(--font-stack);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: opacity 0.2s;
+}
+
+.comment-submit-btn:hover {
+    opacity: 0.88;
+}
+
+.comment-form-msg {
+    font-size: 0.82rem;
+    margin: 6px 0 0 0;
+    min-height: 1.2em;
+}
+
+.comment-msg-success {
+    color: #2e7d32;
+}
+
+.comment-msg-error {
+    color: #c62828;
+}
+
+/* Edit/Delete action buttons — appear on the right of comment-meta */
+.comment-owner-actions {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    margin-left: auto;
+    flex-shrink: 0;
+}
+
+.comment-edit-btn,
+.comment-delete-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 4px 6px;
+    border-radius: 6px;
+    font-size: 0.78rem;
+    transition: background-color 0.15s, color 0.15s;
+    line-height: 1;
+}
+
+.comment-edit-btn {
+    color: #667eea;
+}
+
+.comment-edit-btn:hover {
+    background-color: #eef0ff;
+    color: #4a5cc7;
+}
+
+.comment-delete-btn {
+    color: #e53935;
+}
+
+.comment-delete-btn:hover {
+    background-color: #fdecea;
+    color: #c62828;
+}
+
+/* Inline edit area */
+.comment-edit-area {
+    margin-bottom: 6px;
+}
+
+.comment-edit-textarea {
+    margin-bottom: 6px;
+}
+
+.comment-edit-actions {
+    display: flex;
+    gap: 8px;
+    justify-content: flex-end;
+}
+
+.comment-save-btn,
+.comment-cancel-btn {
+    border: none;
+    border-radius: 6px;
+    padding: 5px 14px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    font-family: var(--font-stack);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    transition: opacity 0.2s;
+}
+
+.comment-save-btn {
+    background: var(--teal-profile);
+    color: #ffffff;
+}
+
+.comment-save-btn:hover {
+    opacity: 0.85;
+}
+
+.comment-cancel-btn {
+    background: #f0f0f0;
+    color: var(--dark-text);
+}
+
+.comment-cancel-btn:hover {
+    background: #e0e0e0;
+}
+
+/* ===== 10. RESPONSIVE ===== */
 @media (max-width: 768px) {
     .top-banner {
         padding: 0.6rem 1rem;

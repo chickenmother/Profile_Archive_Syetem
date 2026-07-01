@@ -35,7 +35,18 @@ class Model_Employee extends Model
             ->execute();
     }
 
-    // === Dashboard related methods ===
+    // Get a single employee's full data (basic info + department/position names)
+    public static function find_by_id($employee_id)
+    {
+        return DB::query("SELECT e.*, d.name AS department_name, p.name AS position_name
+            FROM employees e
+            LEFT JOIN departments d ON e.department_id = d.id
+            LEFT JOIN positions p ON e.position_id = p.id
+            WHERE e.id = :id")
+            ->param('id', $employee_id)
+            ->execute()
+            ->current();
+    }
 
     // Get all employees joined with their department and position names
     public static function get_all_with_details()
@@ -48,49 +59,21 @@ class Model_Employee extends Model
             ->as_array();
     }
 
-    // Get all departments for filter dropdown
-    public static function get_departments()
+    // Update the employee's self-introduction text
+    public static function update_introduction($employee_id, $introduction)
     {
-        return DB::select('id', 'name')
-            ->from('departments')
-            ->order_by('name','ASC')
-            ->execute()
-            ->as_array();
+        DB::update('employees')
+            ->set(['introduction' => $introduction])
+            ->where('id', '=', $employee_id)
+            ->execute();
     }
 
-    // Get all positions for filter dropdown
-    public static function get_positions()
+    // Update the employee's avatar filename
+    public static function update_avatar($employee_id, $filename)
     {
-        return DB::select('id', 'name')
-            ->from('positions')
-            ->order_by('name','ASC')
-            ->execute()
-            ->as_array();
-    }
-
-    // Get admin level for a given employee (for role-based menu visibility)
-    public static function get_admin_level($employee_id)
-    {
-        $result = DB::select('positions.admin_level')
-            ->from('employees')
-            ->join('positions', 'LEFT')
-            ->on('employees.position_id', '=', 'positions.id')
-            ->where('employees.id', '=', $employee_id)
-            ->execute()
-            ->current();
-        return $result ? (int)$result['admin_level'] : 0;
-    }
-
-    // Get employee with project count, skill count, certificate count
-    public static function get_all_with_counts()
-    {
-        $employees = self::get_all_with_details();
-        // Add default count values (0) to each employee
-        foreach ($employees as &$emp) {
-            $emp['project_count'] = 0;
-            $emp['skill_count'] = 0;
-            $emp['certificate_count'] = 0;
-        }
-        return $employees;
+        DB::update('employees')
+            ->set(['avatar' => $filename])
+            ->where('id', '=', $employee_id)
+            ->execute();
     }
 }
