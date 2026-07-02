@@ -90,7 +90,7 @@ class Controller_Dashboard extends Controller
             'id'          => $employee_id,
             'name'        => Session::get('employee_name'),
             'admin_level' => $admin_level,
-            'avatar'      => !empty($current_employee['avatar']) ? '/assets/uploads/avatars/' . $current_employee['avatar'] : null,
+            'avatar'      => !empty($current_employee['avatar']) ? '/assets/uploads/avatars/' . $current_employee['avatar'] : '',
         );
 
         // Pass everything to the view
