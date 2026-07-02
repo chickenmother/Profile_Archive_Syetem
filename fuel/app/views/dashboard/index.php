@@ -34,9 +34,9 @@
             <span><i class="fas fa-user-circle"></i> My Profile</span>
         </a>
         <?php if ($current_user['admin_level'] >= 3): ?>
-        <button class="dropdown-nav-item" onclick="alert('Project Management - coming soon!')">
+        <a href="/project" class="dropdown-nav-item">
             <span><i class="fas fa-project-diagram"></i> Project</span>
-        </button>
+        </a>
         <?php else: ?>
         <button class="dropdown-nav-item" disabled style="opacity:0.5; cursor:not-allowed;">
             <span><i class="fas fa-project-diagram"></i> Project</span>

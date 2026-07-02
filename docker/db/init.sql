@@ -11,15 +11,6 @@ CREATE TABLE IF NOT EXISTS `positions` (
   `admin_level` INT NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-CREATE TABLE IF NOT EXISTS `projects` (
-  `id` INT AUTO_INCREMENT PRIMARY KEY,
-  `name` VARCHAR(255) NOT NULL,
-  `leader_name` VARCHAR(255) NOT NULL,
-  `start_date` DATE NOT NULL,
-  `end_date` DATE NOT NULL,
-  `status` VARCHAR(50) NOT NULL COMMENT 'planning, ongoing, completed'
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
 -- 2. Create the core employees table (dependent on departments and positions)
 CREATE TABLE IF NOT EXISTS `employees` (
   `id` INT AUTO_INCREMENT PRIMARY KEY,
@@ -36,7 +27,18 @@ CREATE TABLE IF NOT EXISTS `employees` (
   FOREIGN KEY (`position_id`) REFERENCES `positions`(`id`) ON UPDATE CASCADE ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- 3. Create dependent tables and junction tables
+-- 3. Create projects (dependent on employees for leader_id FK)
+CREATE TABLE IF NOT EXISTS `projects` (
+  `id` INT AUTO_INCREMENT PRIMARY KEY,
+  `name` VARCHAR(255) NOT NULL,
+  `leader_id` INT NOT NULL,
+  `start_date` DATE NOT NULL,
+  `end_date` DATE NOT NULL,
+  `status` VARCHAR(50) NOT NULL COMMENT 'planning, ongoing, completed',
+  FOREIGN KEY (`leader_id`) REFERENCES `employees`(`id`) ON UPDATE CASCADE ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- 4. Create dependent tables and junction tables
 CREATE TABLE IF NOT EXISTS `employeesProjects` (
   `employee_id` INT NOT NULL,
   `project_id` INT NOT NULL,
@@ -88,19 +90,11 @@ INSERT INTO `positions` (`id`, `name`, `admin_level`) VALUES
 (2, 'Senior Consultant', 3),
 (3, 'Project Manager', 5);
 
--- 3. Seed Projects
-INSERT INTO `projects` (`id`, `name`, `leader_name`, `start_date`, `end_date`, `status`) VALUES
-(1, 'Retail AI Hub Integration', 'Song Junran', '2026-04-01', '2026-09-30', 'ongoing'),
-(2, 'E-Commerce Shelf Inventory DX', 'Alice Smith', '2026-01-15', '2026-05-31', 'completed'),
-(3, 'Next-Gen Profile Archive Architecture', 'Bob Jones', '2026-06-01', '2026-12-31', 'planning'),
-(4, 'Cloud Migration Phase 2', 'Alice Smith', '2026-03-01', '2026-08-31', 'ongoing'),
-(5, 'Mobile App Prototype', 'Song Junran', '2025-10-01', '2026-02-28', 'completed');
-
--- 4. Seed Employees (12 total — enough to test 2 pages of 6)
+-- 3. Seed Employees (12 total — enough to test 2 pages of 6)
 -- Note: Passwords below are mock bcrypt-length hashes for 'password123'
-INSERT INTO `employees` (`id`, `name`, `email`, `password`, `hire_date`, `department_id`, `position_id`, `introduction`) VALUES
-(1,  'Song Junran',    'j.song@example.com',    '$2y$10$RtP1UPTxAGs3.RkODgQCd.0YEGFiUL/wr1u75saqybVvoTZaiLr3W', '2024-04-01', 1, 3, 'Specializes in web application development, Docker microservices, and retail digital transformation strategy.'),
-(2,  'Alice Smith',    'a.smith@example.com',   '$2y$10$RtP1UPTxAGs3.RkODgQCd.0YEGFiUL/wr1u75saqybVvoTZaiLr3W', '2025-01-10', 2, 2, 'Senior consultant focused on enterprise AI scaling and cloud integration pipeline design.'),
+INSERT INTO `employees` (`id`, `name`, `email`, `password`, `hire_date`, `department_id`, `position_id`, `introduction`, `avatar`) VALUES
+(1,  'Song Junran',    'j.song@example.com',    '$2y$10$RtP1UPTxAGs3.RkODgQCd.0YEGFiUL/wr1u75saqybVvoTZaiLr3W', '2024-04-01', 1, 3, 'Specializes in web application development, Docker microservices, and retail digital transformation strategy.', 'avatar_1_1782988360.jpg'),
+(2,  'Alice Smith',    'a.smith@example.com',   '$2y$10$RtP1UPTxAGs3.RkODgQCd.0YEGFiUL/wr1u75saqybVvoTZaiLr3W', '2025-01-10', 2, 2, 'Senior consultant focused on enterprise AI scaling and cloud integration pipeline design.', 'avatar_2_1782897644.jpg'),
 (3,  'Bob Jones',      'b.jones@example.com',   '$2y$10$RtP1UPTxAGs3.RkODgQCd.0YEGFiUL/wr1u75saqybVvoTZaiLr3W', '2025-06-01', 1, 1, 'Full-stack engineer with experience building secure internal corporate archiving solutions.'),
 (4,  'Yuki Tanaka',    'y.tanaka@example.com',  '$2y$10$RtP1UPTxAGs3.RkODgQCd.0YEGFiUL/wr1u75saqybVvoTZaiLr3W', '2026-04-01', 1, 1, 'Junior developer assisting with database normalization updates and system testing.'),
 (5,  'Maria Garcia',   'm.garcia@example.com',  '$2y$10$RtP1UPTxAGs3.RkODgQCd.0YEGFiUL/wr1u75saqybVvoTZaiLr3W', '2024-07-15', 2, 2, 'Senior consultant specializing in digital transformation roadmaps and stakeholder alignment.'),
@@ -111,6 +105,14 @@ INSERT INTO `employees` (`id`, `name`, `email`, `password`, `hire_date`, `depart
 (10, 'Kenji Mori',     'k.mori@example.com',    '$2y$10$RtP1UPTxAGs3.RkODgQCd.0YEGFiUL/wr1u75saqybVvoTZaiLr3W', '2025-08-15', 1, 1, 'Junior developer focused on frontend development with React and TypeScript.'),
 (11, 'Priya Sharma',   'p.sharma@example.com',  '$2y$10$RtP1UPTxAGs3.RkODgQCd.0YEGFiUL/wr1u75saqybVvoTZaiLr3W', '2023-04-01', 3, 2, 'Senior consultant managing vendor relationships and global procurement strategy.'),
 (12, 'David Kim',      'd.kim@example.com',     '$2y$10$RtP1UPTxAGs3.RkODgQCd.0YEGFiUL/wr1u75saqybVvoTZaiLr3W', '2024-02-20', 1, 3, 'Project manager leading system development initiatives and technical team mentorship.');
+
+-- 4. Seed Projects (leader_id references employees.id)
+INSERT INTO `projects` (`id`, `name`, `leader_id`, `start_date`, `end_date`, `status`) VALUES
+(1, 'Retail AI Hub Integration', 1, '2026-04-01', '2026-09-30', 'ongoing'),
+(2, 'E-Commerce Shelf Inventory DX', 2, '2026-01-15', '2026-05-31', 'completed'),
+(3, 'Next-Gen Profile Archive Architecture', 3, '2026-06-01', '2026-12-31', 'planning'),
+(4, 'Cloud Migration Phase 2', 2, '2026-03-01', '2026-08-31', 'ongoing'),
+(5, 'Mobile App Prototype', 1, '2025-10-01', '2026-02-28', 'completed');
 
 -- 5. Seed Employees-Projects Junction (Many-to-Many)
 INSERT INTO `employeesProjects` (`employee_id`, `project_id`) VALUES
