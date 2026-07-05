@@ -81,7 +81,7 @@ class Controller_Project extends Controller
         $name       = trim(Input::post('name', ''));
         $leader_id  = (int) Input::post('leader_id');
         $start_date = trim(Input::post('start_date', ''));
-        $end_date   = trim(Input::post('end_date', ''));
+        $end_date   = !empty(Input::post('end_date')) ? trim(Input::post('end_date')) : null;
         $status     = trim(Input::post('status', ''));
         $members    = Input::post('members'); // JSON array of employee IDs
 
@@ -92,14 +92,14 @@ class Controller_Project extends Controller
         if (!$leader_id) {
             return Response::forge(json_encode(array('success' => false, 'error' => 'Leader is required')), 400, array('Content-Type' => 'application/json'));
         }
-        if (empty($start_date) || empty($end_date)) {
-            return Response::forge(json_encode(array('success' => false, 'error' => 'Start and end dates are required')), 400, array('Content-Type' => 'application/json'));
+        if (empty($start_date)) {
+            return Response::forge(json_encode(array('success' => false, 'error' => 'Start date is required')), 400, array('Content-Type' => 'application/json'));
         }
         if (!in_array($status, array('planning', 'ongoing', 'completed'))) {
             return Response::forge(json_encode(array('success' => false, 'error' => 'Invalid status')), 400, array('Content-Type' => 'application/json'));
         }
 
-        $project_id = Model_Project::create($name, $leader_id, $start_date, $end_date, $status);
+        $project_id = Model_Project::create($name, $leader_id, $start_date, $end_date , $status);
 
         // Sync members
         if (!empty($members)) {
@@ -126,7 +126,7 @@ class Controller_Project extends Controller
         $name       = trim(Input::post('name', ''));
         $leader_id  = (int) Input::post('leader_id');
         $start_date = trim(Input::post('start_date', ''));
-        $end_date   = trim(Input::post('end_date', ''));
+        $end_date   = !empty(Input::post('end_date')) ? trim(Input::post('end_date')) : null;
         $status     = trim(Input::post('status', ''));
         $members    = Input::post('members'); // JSON array of employee IDs
 
@@ -148,8 +148,8 @@ class Controller_Project extends Controller
         if (!$leader_id) {
             return Response::forge(json_encode(array('success' => false, 'error' => 'Leader is required')), 400, array('Content-Type' => 'application/json'));
         }
-        if (empty($start_date) || empty($end_date)) {
-            return Response::forge(json_encode(array('success' => false, 'error' => 'Start and end dates are required')), 400, array('Content-Type' => 'application/json'));
+        if (empty($start_date)) {
+            return Response::forge(json_encode(array('success' => false, 'error' => 'Start date is required')), 400, array('Content-Type' => 'application/json'));
         }
         if (!in_array($status, array('planning', 'ongoing', 'completed'))) {
             return Response::forge(json_encode(array('success' => false, 'error' => 'Invalid status')), 400, array('Content-Type' => 'application/json'));

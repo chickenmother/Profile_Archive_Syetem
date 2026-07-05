@@ -561,9 +561,9 @@ body {
     font-size: 0.85rem;
 }
 
-.member-search-wrapper input {
+.member-search-wrapper input[type="text"] {
     width: 100%;
-    padding: 10px 14px 10px 32px;
+    padding: 10px 14px 10px 36px;
     border: 1px solid #e0e0e0;
     border-radius: 8px;
     font-size: 0.9rem;

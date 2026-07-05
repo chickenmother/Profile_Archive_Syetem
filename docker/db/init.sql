@@ -33,7 +33,7 @@ CREATE TABLE IF NOT EXISTS `projects` (
   `name` VARCHAR(255) NOT NULL,
   `leader_id` INT NOT NULL,
   `start_date` DATE NOT NULL,
-  `end_date` DATE NOT NULL,
+  `end_date` DATE NULL,
   `status` VARCHAR(50) NOT NULL COMMENT 'planning, ongoing, completed',
   FOREIGN KEY (`leader_id`) REFERENCES `employees`(`id`) ON UPDATE CASCADE ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -95,16 +95,16 @@ INSERT INTO `positions` (`id`, `name`, `admin_level`) VALUES
 INSERT INTO `employees` (`id`, `name`, `email`, `password`, `hire_date`, `department_id`, `position_id`, `introduction`, `avatar`) VALUES
 (1,  'Song Junran',    'j.song@example.com',    '$2y$10$RtP1UPTxAGs3.RkODgQCd.0YEGFiUL/wr1u75saqybVvoTZaiLr3W', '2024-04-01', 1, 3, 'Specializes in web application development, Docker microservices, and retail digital transformation strategy.', 'avatar_1_1782988360.jpg'),
 (2,  'Alice Smith',    'a.smith@example.com',   '$2y$10$RtP1UPTxAGs3.RkODgQCd.0YEGFiUL/wr1u75saqybVvoTZaiLr3W', '2025-01-10', 2, 2, 'Senior consultant focused on enterprise AI scaling and cloud integration pipeline design.', 'avatar_2_1782897644.jpg'),
-(3,  'Bob Jones',      'b.jones@example.com',   '$2y$10$RtP1UPTxAGs3.RkODgQCd.0YEGFiUL/wr1u75saqybVvoTZaiLr3W', '2025-06-01', 1, 1, 'Full-stack engineer with experience building secure internal corporate archiving solutions.'),
-(4,  'Yuki Tanaka',    'y.tanaka@example.com',  '$2y$10$RtP1UPTxAGs3.RkODgQCd.0YEGFiUL/wr1u75saqybVvoTZaiLr3W', '2026-04-01', 1, 1, 'Junior developer assisting with database normalization updates and system testing.'),
-(5,  'Maria Garcia',   'm.garcia@example.com',  '$2y$10$RtP1UPTxAGs3.RkODgQCd.0YEGFiUL/wr1u75saqybVvoTZaiLr3W', '2024-07-15', 2, 2, 'Senior consultant specializing in digital transformation roadmaps and stakeholder alignment.'),
-(6,  'Chen Wei',       'c.wei@example.com',     '$2y$10$RtP1UPTxAGs3.RkODgQCd.0YEGFiUL/wr1u75saqybVvoTZaiLr3W', '2025-03-20', 1, 1, 'Backend engineer with a focus on API design, microservices architecture, and performance tuning.'),
-(7,  'Hana Yamamoto',  'h.yamamoto@example.com','$2y$10$RtP1UPTxAGs3.RkODgQCd.0YEGFiUL/wr1u75saqybVvoTZaiLr3W', '2023-09-01', 3, 3, 'Project manager overseeing global operations and cross-regional delivery coordination.'),
-(8,  'Liam O Brien',   'l.obrien@example.com',  '$2y$10$RtP1UPTxAGs3.RkODgQCd.0YEGFiUL/wr1u75saqybVvoTZaiLr3W', '2026-01-05', 3, 1, 'Junior engineer supporting global ops infrastructure and internal tooling automation.'),
-(9,  'Sara Nguyen',    's.nguyen@example.com',  '$2y$10$RtP1UPTxAGs3.RkODgQCd.0YEGFiUL/wr1u75saqybVvoTZaiLr3W', '2024-11-01', 2, 2, 'Consultant with expertise in data analytics, BI dashboards, and enterprise reporting pipelines.'),
-(10, 'Kenji Mori',     'k.mori@example.com',    '$2y$10$RtP1UPTxAGs3.RkODgQCd.0YEGFiUL/wr1u75saqybVvoTZaiLr3W', '2025-08-15', 1, 1, 'Junior developer focused on frontend development with React and TypeScript.'),
-(11, 'Priya Sharma',   'p.sharma@example.com',  '$2y$10$RtP1UPTxAGs3.RkODgQCd.0YEGFiUL/wr1u75saqybVvoTZaiLr3W', '2023-04-01', 3, 2, 'Senior consultant managing vendor relationships and global procurement strategy.'),
-(12, 'David Kim',      'd.kim@example.com',     '$2y$10$RtP1UPTxAGs3.RkODgQCd.0YEGFiUL/wr1u75saqybVvoTZaiLr3W', '2024-02-20', 1, 3, 'Project manager leading system development initiatives and technical team mentorship.');
+(3,  'Bob Jones',      'b.jones@example.com',   '$2y$10$RtP1UPTxAGs3.RkODgQCd.0YEGFiUL/wr1u75saqybVvoTZaiLr3W', '2025-06-01', 1, 1, 'Full-stack engineer with experience building secure internal corporate archiving solutions.', null),
+(4,  'Yuki Tanaka',    'y.tanaka@example.com',  '$2y$10$RtP1UPTxAGs3.RkODgQCd.0YEGFiUL/wr1u75saqybVvoTZaiLr3W', '2026-04-01', 1, 1, 'Junior developer assisting with database normalization updates and system testing.', null),
+(5,  'Maria Garcia',   'm.garcia@example.com',  '$2y$10$RtP1UPTxAGs3.RkODgQCd.0YEGFiUL/wr1u75saqybVvoTZaiLr3W', '2024-07-15', 2, 2, 'Senior consultant specializing in digital transformation roadmaps and stakeholder alignment.', null),
+(6,  'Chen Wei',       'c.wei@example.com',     '$2y$10$RtP1UPTxAGs3.RkODgQCd.0YEGFiUL/wr1u75saqybVvoTZaiLr3W', '2025-03-20', 1, 1, 'Backend engineer with a focus on API design, microservices architecture, and performance tuning.', null),
+(7,  'Hana Yamamoto',  'h.yamamoto@example.com','$2y$10$RtP1UPTxAGs3.RkODgQCd.0YEGFiUL/wr1u75saqybVvoTZaiLr3W', '2023-09-01', 3, 3, 'Project manager overseeing global operations and cross-regional delivery coordination.', null),
+(8,  'Liam O Brien',   'l.obrien@example.com',  '$2y$10$RtP1UPTxAGs3.RkODgQCd.0YEGFiUL/wr1u75saqybVvoTZaiLr3W', '2026-01-05', 3, 1, 'Junior engineer supporting global ops infrastructure and internal tooling automation.', null),
+(9,  'Sara Nguyen',    's.nguyen@example.com',  '$2y$10$RtP1UPTxAGs3.RkODgQCd.0YEGFiUL/wr1u75saqybVvoTZaiLr3W', '2024-11-01', 2, 2, 'Consultant with expertise in data analytics, BI dashboards, and enterprise reporting pipelines.', null),
+(10, 'Kenji Mori',     'k.mori@example.com',    '$2y$10$RtP1UPTxAGs3.RkODgQCd.0YEGFiUL/wr1u75saqybVvoTZaiLr3W', '2025-08-15', 1, 1, 'Junior developer focused on frontend development with React and TypeScript.', null),
+(11, 'Priya Sharma',   'p.sharma@example.com',  '$2y$10$RtP1UPTxAGs3.RkODgQCd.0YEGFiUL/wr1u75saqybVvoTZaiLr3W', '2023-04-01', 3, 2, 'Senior consultant managing vendor relationships and global procurement strategy.', null),
+(12, 'David Kim',      'd.kim@example.com',     '$2y$10$RtP1UPTxAGs3.RkODgQCd.0YEGFiUL/wr1u75saqybVvoTZaiLr3W', '2024-02-20', 1, 3, 'Project manager leading system development initiatives and technical team mentorship.', null);
 
 -- 4. Seed Projects (leader_id references employees.id)
 INSERT INTO `projects` (`id`, `name`, `leader_id`, `start_date`, `end_date`, `status`) VALUES

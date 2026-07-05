@@ -137,7 +137,7 @@
                         <div class="project-info">
                             <span class="project-name" data-bind="text: name"></span>
                             <span class="project-leader">Led by <span data-bind="text: leader_name"></span></span>
-                            <span class="project-dates" data-bind="text: start_date + ' → ' + end_date"></span>
+                            <span class="project-dates" data-bind="text: start_date + ' → ' + end_date || 'Ongoing'"></span>
                         </div>
                         <span class="project-status-chip" data-bind="text: status, css: { 'status-ongoing': status === 'ongoing', 'status-completed': status === 'completed', 'status-planning': status === 'planning' }"></span>
                     </div>
