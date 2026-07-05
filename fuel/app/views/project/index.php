@@ -36,15 +36,20 @@
         <a href="/profile" class="dropdown-nav-item">
             <span><i class="fas fa-user-circle"></i> My Profile</span>
         </a>
+        <a href="/account" class="dropdown-nav-item">
+            <span><i class="fas fa-user-cog"></i> Account</span>
+        </a>
         <a href="/project" class="dropdown-nav-item" style="background-color: #f0f2ff;">
             <span><i class="fas fa-project-diagram"></i> Project</span>
         </a>
         <?php if ($current_user['admin_level'] >= 5): ?>
-        <button class="dropdown-nav-item" onclick="alert('Account Management - coming soon!')">
-            <span><i class="fas fa-users-cog"></i> Account</span>
-        </button>
-        <button class="dropdown-nav-item" onclick="alert('Database Management - coming soon!')">
+        <a href="/db" class="dropdown-nav-item">
             <span><i class="fas fa-database"></i> Database</span>
+        </a>
+        <?php else: ?>
+        <button class="dropdown-nav-item" disabled style="opacity:0.5; cursor:not-allowed;">
+            <span><i class="fas fa-database"></i> Database</span>
+            <span class="badge-lock"><i class="fas fa-lock"></i></span>
         </button>
         <?php endif; ?>
         <a href="/auth/logout" class="dropdown-nav-item logout-trigger">
@@ -79,9 +84,11 @@
                 <span data-bind="text: showMyProjectsOnly() ? 'My Projects' : 'All Projects'"></span>
             </button>
         </div>
+        <?php if ($current_user['admin_level'] >= 3): ?>
         <button class="btn-add-project" data-bind="click: openCreatePanel">
             <i class="fas fa-plus"></i> Add New Project
         </button>
+        <?php endif; ?>
     </div>
 
     <!-- ===== MAIN CONTENT ===== -->

@@ -33,28 +33,17 @@
         <a href="/profile" class="dropdown-nav-item">
             <span><i class="fas fa-user-circle"></i> My Profile</span>
         </a>
-        <?php if ($current_user['admin_level'] >= 3): ?>
+        <a href="/account" class="dropdown-nav-item">
+            <span><i class="fas fa-user-cog"></i> Account</span>
+        </a>
         <a href="/project" class="dropdown-nav-item">
             <span><i class="fas fa-project-diagram"></i> Project</span>
         </a>
-        <?php else: ?>
-        <button class="dropdown-nav-item" disabled style="opacity:0.5; cursor:not-allowed;">
-            <span><i class="fas fa-project-diagram"></i> Project</span>
-            <span class="badge-lock"><i class="fas fa-lock"></i></span>
-        </button>
-        <?php endif; ?>
         <?php if ($current_user['admin_level'] >= 5): ?>
-        <button class="dropdown-nav-item" onclick="alert('Account Management - coming soon!')">
-            <span><i class="fas fa-users-cog"></i> Account</span>
-        </button>
-        <button class="dropdown-nav-item" onclick="alert('Database Management - coming soon!')">
+        <a href="/db" class="dropdown-nav-item">
             <span><i class="fas fa-database"></i> Database</span>
-        </button>
+        </a>
         <?php else: ?>
-        <button class="dropdown-nav-item" disabled style="opacity:0.5; cursor:not-allowed;">
-            <span><i class="fas fa-users-cog"></i> Account</span>
-            <span class="badge-lock"><i class="fas fa-lock"></i></span>
-        </button>
         <button class="dropdown-nav-item" disabled style="opacity:0.5; cursor:not-allowed;">
             <span><i class="fas fa-database"></i> Database</span>
             <span class="badge-lock"><i class="fas fa-lock"></i></span>

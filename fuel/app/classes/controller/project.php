@@ -29,12 +29,8 @@ class Controller_Project extends Controller
             }
         }
 
-        // Admin level check — must be >= 3 to access Project Management
-        $admin_level = Model_Position::get_admin_level(Session::get('employee_id'));
-        if ($admin_level < 3) {
-            Response::redirect('/dashboard');
-            return;
-        }
+        // Note: Project Management page is now viewable by all employees.
+        // Only project creation is restricted to admin_level >= 3 (see action_create).
     }
 
     /**
@@ -76,6 +72,12 @@ class Controller_Project extends Controller
     {
         if (Input::method() !== 'POST') {
             return Response::forge(json_encode(array('success' => false, 'error' => 'Method not allowed')), 405, array('Content-Type' => 'application/json'));
+        }
+
+        // Only admin_level >= 3 can create new projects
+        $admin_level = Model_Position::get_admin_level(Session::get('employee_id'));
+        if ($admin_level < 3) {
+            return Response::forge(json_encode(array('success' => false, 'error' => 'You do not have permission to create projects')), 403, array('Content-Type' => 'application/json'));
         }
 
         $name       = trim(Input::post('name', ''));

@@ -15,10 +15,48 @@
     <div class="top-banner">
         <h1><i class="fas fa-address-book"></i> Profile Archive System</h1>
         <div style="display: flex; align-items: center; gap: 0.8rem;">
-            <a href="/dashboard" class="back-to-dashboard-btn">
-                <i class="fas fa-arrow-left"></i> Dashboard
-            </a>
+            <div class="top-banner-user">
+                <?php if (!empty($current_user['avatar'])): ?>
+                <div class="top-banner-avatar" style="background-image: url('<?php echo $current_user['avatar']; ?>');"></div>
+                <?php else: ?>
+                <div class="top-banner-avatar"><i class="fas fa-user-circle"></i></div>
+                <?php endif; ?>
+                <span class="top-banner-username"><?php echo $current_user['name']; ?></span>
+            </div>
+            <button class="hamburger-btn" id="hamburgerBtn" data-bind="click: toggleDropdown">
+                <i class="fas fa-bars"></i>
+            </button>
         </div>
+    </div>
+
+    <!-- ===== HAMBURGER DROPDOWN MENU ===== -->
+    <div class="user-profile-menu-dropdown" id="menuDropdown" data-bind="css: { open: dropdownOpen() }">
+        <a href="/dashboard" class="dropdown-nav-item">
+            <span><i class="fas fa-tachometer-alt"></i> Dashboard</span>
+        </a>
+        <a href="/profile" class="dropdown-nav-item" style="background-color: #f0f2ff;">
+            <span><i class="fas fa-user-circle"></i> My Profile</span>
+        </a>
+        <a href="/account" class="dropdown-nav-item">
+            <span><i class="fas fa-user-cog"></i> Account</span>
+        </a>
+        <a href="/project" class="dropdown-nav-item">
+            <span><i class="fas fa-project-diagram"></i> Project</span>
+        </a>
+        <?php if ($current_user['admin_level'] >= 5): ?>
+        <a href="/db" class="dropdown-nav-item">
+            <span><i class="fas fa-database"></i> Database</span>
+        </a>
+        <?php else: ?>
+        <button class="dropdown-nav-item" disabled style="opacity:0.5; cursor:not-allowed;">
+            <span><i class="fas fa-database"></i> Database</span>
+            <span class="badge-lock"><i class="fas fa-lock"></i></span>
+        </button>
+        <?php endif; ?>
+        <div style="border-top: 1px solid #eee;"></div>
+        <a href="/auth/logout" class="dropdown-nav-item logout-trigger">
+            <span><i class="fas fa-sign-out-alt"></i> Logout</span>
+        </a>
     </div>
 
     <!-- ===== MAIN PROFILE PAGE ===== -->
@@ -195,6 +233,19 @@
 
     function ProfileViewModel() {
         var self = this;
+
+        // ===== Hamburger Dropdown =====
+        self.dropdownOpen = ko.observable(false);
+        self.toggleDropdown = function() {
+            self.dropdownOpen(!self.dropdownOpen());
+        };
+        document.addEventListener('click', function(e) {
+            var menu = document.getElementById('menuDropdown');
+            var btn = document.getElementById('hamburgerBtn');
+            if (menu && btn && !menu.contains(e.target) && !btn.contains(e.target)) {
+                self.dropdownOpen(false);
+            }
+        });
 
         // ===== Employee data as a "with" target (needs observable wrapper for avatar) =====
         employeeData.avatarUrl = ko.observable(employeeData.avatar ? '/assets/uploads/avatars/' + employeeData.avatar : null);

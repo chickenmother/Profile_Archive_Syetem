@@ -76,4 +76,46 @@ class Model_Employee extends Model
             ->where('id', '=', $employee_id)
             ->execute();
     }
+
+    // Update the employee's display name
+    public static function update_name($employee_id, $name)
+    {
+        DB::update('employees')
+            ->set(['name' => $name])
+            ->where('id', '=', $employee_id)
+            ->execute();
+    }
+
+    // Update the employee's email address
+    public static function update_email($employee_id, $email)
+    {
+        DB::update('employees')
+            ->set(['email' => $email])
+            ->where('id', '=', $employee_id)
+            ->execute();
+    }
+
+    // Check whether an email is already used by another employee
+    public static function email_exists($email, $exclude_id = null)
+    {
+        $query = DB::select('id')
+            ->from('employees')
+            ->where('email', '=', $email);
+
+        if ($exclude_id) {
+            $query->where('id', '!=', $exclude_id);
+        }
+
+        $result = $query->execute()->current();
+        return !empty($result);
+    }
+
+    // Update the employee's password (expects an already-hashed password)
+    public static function update_password($employee_id, $hashed_password)
+    {
+        DB::update('employees')
+            ->set(['password' => $hashed_password])
+            ->where('id', '=', $employee_id)
+            ->execute();
+    }
 }
