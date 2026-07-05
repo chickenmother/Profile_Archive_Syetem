@@ -27,7 +27,8 @@ class Model_Project extends Model
         return DB::query(
             "SELECT p.id, p.name, p.leader_id, p.start_date, p.end_date, p.status,
                     e.name AS leader_name,
-                    (SELECT COUNT(*) FROM employeesProjects ep WHERE ep.project_id = p.id) AS member_count
+                    (SELECT COUNT(*) FROM employeesProjects ep WHERE ep.project_id = p.id) AS member_count,
+                    (SELECT GROUP_CONCAT(ep2.employee_id) FROM employeesProjects ep2 WHERE ep2.project_id = p.id) AS member_ids
              FROM projects p
              JOIN employees e ON p.leader_id = e.id
              ORDER BY p.id ASC"

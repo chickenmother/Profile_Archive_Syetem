@@ -67,6 +67,17 @@
                     <option value="completed">Completed</option>
                 </select>
             </div>
+            <div class="filter-wrapper">
+                <select class="filter-select" data-bind="value: sortBy">
+                    <option value="id">Sort: Project ID</option>
+                    <option value="name">Sort: Project Name</option>
+                    <option value="date">Sort: Start Date</option>
+                </select>
+            </div>
+            <button class="btn-toggle-myprojects" data-bind="click: toggleMyProjects, css: { active: showMyProjectsOnly() }">
+                <i class="fas fa-user-check"></i>
+                <span data-bind="text: showMyProjectsOnly() ? 'My Projects' : 'All Projects'"></span>
+            </button>
         </div>
         <button class="btn-add-project" data-bind="click: openCreatePanel">
             <i class="fas fa-plus"></i> Add New Project
@@ -253,6 +264,8 @@ function ProjectViewModel() {
     // ===== FILTER STATE =====
     self.searchText = ko.observable('');
     self.statusFilter = ko.observable('');
+    self.sortBy = ko.observable('id');
+    self.showMyProjectsOnly = ko.observable(false);
 
     // ===== PAGINATION =====
     self.currentPage = ko.observable(1);
@@ -273,18 +286,46 @@ function ProjectViewModel() {
     self.memberSearchResults = ko.observableArray([]);
     self.selectedMembers = ko.observableArray([]);
 
+    // ===== HELPER: Check if current user is related to a project (leader or member) =====
+    self.isRelatedToUser = function(project) {
+        if (parseInt(project.leader_id) === self.currentUserId) {
+            return true;
+        }
+        if (project.member_ids) {
+            var ids = String(project.member_ids).split(',').map(function(id) { return parseInt(id); });
+            return ids.indexOf(self.currentUserId) !== -1;
+        }
+        return false;
+    };
+
     // ===== COMPUTED: FILTERED PROJECTS =====
     self.filteredProjects = ko.computed(function() {
         var search = self.searchText().trim().toLowerCase();
         var status = self.statusFilter();
+        var myOnly = self.showMyProjectsOnly();
+        var sortKey = self.sortBy();
 
-        return self.allProjects().filter(function(p) {
+        var result = self.allProjects().filter(function(p) {
             var matchSearch = !search ||
                 p.name.toLowerCase().indexOf(search) !== -1 ||
                 String(p.id).indexOf(search) !== -1;
             var matchStatus = !status || p.status === status;
-            return matchSearch && matchStatus;
+            var matchMine = !myOnly || self.isRelatedToUser(p);
+            return matchSearch && matchStatus && matchMine;
         });
+
+        // Sort
+        result = result.slice().sort(function(a, b) {
+            if (sortKey === 'name') {
+                return a.name.localeCompare(b.name);
+            } else if (sortKey === 'date') {
+                return new Date(a.start_date) - new Date(b.start_date);
+            }
+            // default: sort by ID
+            return parseInt(a.id) - parseInt(b.id);
+        });
+
+        return result;
     });
 
     // Reset to page 1 when filters change
@@ -323,6 +364,11 @@ function ProjectViewModel() {
     // ===== METHODS: DROPDOWN =====
     self.toggleDropdown = function() {
         self.dropdownOpen(!self.dropdownOpen());
+    };
+
+    // ===== METHODS: MY PROJECTS TOGGLE =====
+    self.toggleMyProjects = function() {
+        self.showMyProjectsOnly(!self.showMyProjectsOnly());
     };
 
     // Close dropdown when clicking outside

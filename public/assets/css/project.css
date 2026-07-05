@@ -227,6 +227,34 @@ body {
     opacity: 0.88;
 }
 
+.btn-toggle-myprojects {
+    background-color: #ffffff;
+    color: #667eea;
+    border: 1px solid #667eea;
+    border-radius: 8px;
+    padding: 8px 16px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    font-family: var(--font-stack);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: all 0.2s;
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+.btn-toggle-myprojects:hover {
+    background-color: #f0f2ff;
+}
+
+.btn-toggle-myprojects.active {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: #ffffff;
+    border-color: transparent;
+}
+
 /* ===== 5. MAIN CONTAINER & TABLE ===== */
 .project-container {
     padding: 30px;
@@ -863,6 +891,11 @@ body {
     }
 
     .btn-add-project {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .btn-toggle-myprojects {
         width: 100%;
         justify-content: center;
     }
