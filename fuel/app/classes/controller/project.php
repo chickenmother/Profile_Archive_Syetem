@@ -83,7 +83,8 @@ class Controller_Project extends Controller
         $name       = trim(Input::post('name', ''));
         $leader_id  = (int) Input::post('leader_id');
         $start_date = trim(Input::post('start_date', ''));
-        $end_date   = !empty(Input::post('end_date')) ? trim(Input::post('end_date')) : null;
+        $end_date   = trim((string) Input::post('end_date', ''));
+        $end_date   = ($end_date === '' || strtolower($end_date) === 'null') ? null : $end_date;
         $status     = trim(Input::post('status', ''));
         $members    = Input::post('members'); // JSON array of employee IDs
 
@@ -103,13 +104,15 @@ class Controller_Project extends Controller
 
         $project_id = Model_Project::create($name, $leader_id, $start_date, $end_date , $status);
 
-        // Sync members
+        // Sync members — the leader is always guaranteed to be included as a member
+        $member_ids = array();
         if (!empty($members)) {
-            $member_ids = is_array($members) ? $members : json_decode($members, true);
-            if (is_array($member_ids)) {
-                Model_Project::sync_members($project_id, $member_ids);
+            $decoded = is_array($members) ? $members : json_decode($members, true);
+            if (is_array($decoded)) {
+                $member_ids = $decoded;
             }
         }
+        Model_Project::sync_members($project_id, $member_ids, $leader_id);
 
         return Response::forge(json_encode(array('success' => true, 'project_id' => $project_id)), 200, array('Content-Type' => 'application/json'));
     }
@@ -128,7 +131,8 @@ class Controller_Project extends Controller
         $name       = trim(Input::post('name', ''));
         $leader_id  = (int) Input::post('leader_id');
         $start_date = trim(Input::post('start_date', ''));
-        $end_date   = !empty(Input::post('end_date')) ? trim(Input::post('end_date')) : null;
+        $end_date   = trim((string) Input::post('end_date', ''));
+        $end_date   = ($end_date === '' || strtolower($end_date) === 'null') ? null : $end_date;
         $status     = trim(Input::post('status', ''));
         $members    = Input::post('members'); // JSON array of employee IDs
 
@@ -160,11 +164,11 @@ class Controller_Project extends Controller
         try {
             Model_Project::update_project($project_id, $name, $leader_id, $start_date, $end_date, $status);
 
-            // Sync members
+            // Sync members — the (possibly new) leader is always guaranteed to be included as a member
             if ($members !== null) {
                 $member_ids = is_array($members) ? $members : json_decode($members, true);
                 if (is_array($member_ids)) {
-                    Model_Project::sync_members($project_id, $member_ids);
+                    Model_Project::sync_members($project_id, $member_ids, $leader_id);
                 }
             }
 

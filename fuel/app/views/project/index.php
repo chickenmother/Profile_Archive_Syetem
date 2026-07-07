@@ -165,7 +165,7 @@
 
             <div class="form-group">
                 <label>Leader <span class="required">*</span></label>
-                <select required data-bind="value: formLeader, options: allEmployees, optionsText: function(emp) { return emp.name + ' (ID: ' + emp.id + ')'; }, optionsValue: 'id', optionsCaption: 'Select leader...'"></select>
+                <select required data-bind="value: formLeader, options: allEmployees, optionsText: function(emp) { return emp.name + ' (ID: ' + emp.id + ')'; }, optionsValue: 'id', optionsCaption: 'Select leader...', event: { change: onLeaderChange }"></select>
             </div>
 
             <div class="form-row">
@@ -210,12 +210,19 @@
                     <span class="no-members">No members added yet</span>
                     <!-- /ko -->
                     <!-- ko foreach: selectedMembers -->
-                    <span class="member-chip">
+                    <span class="member-chip" data-bind="css: { 'member-chip-leader': $root.isFormLeader($data) }">
                         <span data-bind="text: name"></span>
                         <span class="member-chip-id" data-bind="text: '(ID: ' + id + ')'"></span>
+                        <!-- ko if: $root.isFormLeader($data) -->
+                        <span class="member-chip-leader-badge" title="Project leader — always included as a member">
+                            <i class="fas fa-star"></i> Leader
+                        </span>
+                        <!-- /ko -->
+                        <!-- ko ifnot: $root.isFormLeader($data) -->
                         <button type="button" class="member-chip-remove" data-bind="click: function() { $root.removeMember($data); }">
                             <i class="fas fa-times"></i>
                         </button>
+                        <!-- /ko -->
                     </span>
                     <!-- /ko -->
                 </div>
@@ -407,6 +414,31 @@ function ProjectViewModel() {
         return parseInt(project.leader_id) === self.currentUserId;
     };
 
+    // Check whether a given member (in selectedMembers) is the currently-selected form leader
+    self.isFormLeader = function(member) {
+        var leaderId = parseInt(self.formLeader());
+        return !isNaN(leaderId) && parseInt(member.id) === leaderId;
+    };
+
+    // Ensure the currently-selected leader is present in selectedMembers (added automatically, non-removable in UI)
+    self.ensureLeaderIsMember = function() {
+        var leaderId = parseInt(self.formLeader());
+        if (!leaderId) return;
+
+        var alreadyMember = self.selectedMembers().some(function(m) { return parseInt(m.id) === leaderId; });
+        if (!alreadyMember) {
+            var emp = self.allEmployees().find(function(e) { return parseInt(e.id) === leaderId; });
+            if (emp) {
+                self.selectedMembers.push({ id: leaderId, name: emp.name });
+            }
+        }
+    };
+
+    // Triggered when the Leader dropdown selection changes
+    self.onLeaderChange = function() {
+        self.ensureLeaderIsMember();
+    };
+
     self.escapeHtml = function(str) {
         if (!str) return '';
         var div = document.createElement('div');
@@ -433,6 +465,7 @@ function ProjectViewModel() {
         self.selectedMembers([]);
         self.memberSearchText('');
         self.memberSearchResults([]);
+        self.ensureLeaderIsMember();
         self.sidePanelOpen(true);
     };
 
@@ -461,6 +494,7 @@ function ProjectViewModel() {
 
                     self.memberSearchText('');
                     self.memberSearchResults([]);
+                    self.ensureLeaderIsMember();
                     self.sidePanelOpen(true);
                 }
             }
@@ -527,7 +561,7 @@ function ProjectViewModel() {
         var params = 'name=' + encodeURIComponent(name) +
                      '&leader_id=' + encodeURIComponent(leaderId) +
                      '&start_date=' + encodeURIComponent(startDate) +
-                     '&end_date=' + encodeURIComponent(endDate) +
+                     '&end_date=' + encodeURIComponent(endDate || '') +
                      '&status=' + encodeURIComponent(status) +
                      '&members=' + encodeURIComponent(JSON.stringify(memberIds));
 

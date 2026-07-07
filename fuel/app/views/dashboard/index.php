@@ -120,7 +120,7 @@
 
         <div class="search-input-wrapper">
             <i class="fas fa-search search-icon"></i>
-            <input type="text" placeholder="Search by name..." data-bind="value: searchText, event: { keyup: applyFilters }">
+            <input type="text" placeholder="Search by name..." data-bind="textInput: searchText">
         </div>
     </div>
 

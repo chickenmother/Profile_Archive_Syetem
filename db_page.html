@@ -4,8 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>DB Management - Profile Archive System</title>
-    <?php echo Asset::css('project.css'); ?>
-    <?php echo Asset::css('db.css'); ?>
+    	<link type="text/css" rel="stylesheet" href="http://localhost/assets/css/project.css?1783406760" />
+    	<link type="text/css" rel="stylesheet" href="http://localhost/assets/css/db.css?1783409134" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/knockout/3.5.1/knockout-latest.js"></script>
 </head>
@@ -16,12 +16,8 @@
         <h1><i class="fas fa-address-book"></i> Profile Archive System</h1>
         <div style="display: flex; align-items: center; gap: 0.8rem;">
             <div class="top-banner-user">
-                <?php if (!empty($current_user['avatar'])): ?>
-                <div class="top-banner-avatar" style="background-image: url('<?php echo $current_user['avatar']; ?>');"></div>
-                <?php else: ?>
-                <div class="top-banner-avatar"><i class="fas fa-user-circle"></i></div>
-                <?php endif; ?>
-                <span class="top-banner-username"><?php echo $current_user['name']; ?></span>
+                                <div class="top-banner-avatar"><i class="fas fa-user-circle"></i></div>
+                                <span class="top-banner-username">Maria Garcia</span>
             </div>
             <button class="hamburger-btn" id="hamburgerBtn" data-bind="click: toggleDropdown">
                 <i class="fas fa-bars"></i>
@@ -212,8 +208,8 @@
 
 <script>
 // ===== DATA FROM SERVER =====
-var dbSchema = <?php echo $schema_json; ?>;
-var dbTableList = <?php echo $table_list_json; ?>;
+var dbSchema = {"departments":{"label":"Departments","icon":"fa-building","primary_key":"id","columns":{"id":{"label":"ID","type":"number","readonly":true},"name":{"label":"Name","type":"text","required":true},"number_of_employee":{"label":"Employees","type":"number","required":true,"default":0}}},"positions":{"label":"Positions","icon":"fa-id-badge","primary_key":"id","columns":{"id":{"label":"ID","type":"number","readonly":true},"name":{"label":"Name","type":"text","required":true},"admin_level":{"label":"Admin Level","type":"number","required":true,"default":1}}},"employees":{"label":"Employees","icon":"fa-users","primary_key":"id","columns":{"id":{"label":"ID","type":"number","readonly":true},"name":{"label":"Name","type":"text","required":true},"email":{"label":"Email","type":"text","required":true},"password":{"label":"Password","type":"text","hidden":true},"hire_date":{"label":"Hire Date","type":"date","required":true},"department_id":{"label":"Department","type":"fk_select","fk_table":"departments","fk_display":"name"},"position_id":{"label":"Position","type":"fk_select","fk_table":"positions","fk_display":"name","filterable":true},"introduction":{"label":"Introduction","type":"textarea"},"avatar":{"label":"Avatar Filename","type":"text"},"remember_token":{"label":"Remember Token","type":"text","hidden":true}},"default_password":"password123"},"projects":{"label":"Projects","icon":"fa-project-diagram","primary_key":"id","columns":{"id":{"label":"ID","type":"number","readonly":true},"name":{"label":"Name","type":"text","required":true},"leader_id":{"label":"Leader","type":"fk_select","fk_table":"employees","fk_display":"name","required":true},"start_date":{"label":"Start Date","type":"date","required":true},"end_date":{"label":"End Date","type":"date"},"status":{"label":"Status","type":"select","required":true,"filterable":true,"options":{"planning":"Planning","ongoing":"Ongoing","completed":"Completed"}}}},"skills":{"label":"Skills","icon":"fa-code","primary_key":"id","columns":{"id":{"label":"ID","type":"number","readonly":true},"employee_id":{"label":"Employee","type":"fk_select","fk_table":"employees","fk_display":"name","required":true},"skill_id":{"label":"Skill","type":"config_select","config":"skills","required":true},"level":{"label":"Level","type":"select","required":true,"filterable":true,"options":{"beginner":"Beginner","intermediate":"Intermediate","expert":"Expert"}}}},"certificates":{"label":"Certificates","icon":"fa-certificate","primary_key":"id","columns":{"id":{"label":"ID","type":"number","readonly":true},"employee_id":{"label":"Employee","type":"fk_select","fk_table":"employees","fk_display":"name","required":true},"certificate_id":{"label":"Certificate","type":"config_select","config":"certificates","required":true},"level":{"label":"Level","type":"text","required":true},"scale":{"label":"Scale","type":"select","required":true,"filterable":true,"options":{"local":"Local","national":"National","international":"International"}}}},"comments":{"label":"Comments","icon":"fa-comments","primary_key":"id","columns":{"id":{"label":"ID","type":"number","readonly":true},"author_id":{"label":"Author","type":"fk_select","fk_table":"employees","fk_display":"name","required":true},"receiver_id":{"label":"Receiver","type":"fk_select","fk_table":"employees","fk_display":"name","required":true},"content":{"label":"Content","type":"textarea","required":true},"create_time":{"label":"Created At","type":"text","readonly":true}}},"employeesProjects":{"label":"Employee \u2194 Project Links","icon":"fa-link","primary_key":null,"composite_key":["employee_id","project_id"],"columns":{"employee_id":{"label":"Employee","type":"fk_select","fk_table":"employees","fk_display":"name","required":true},"project_id":{"label":"Project","type":"fk_select","fk_table":"projects","fk_display":"name","required":true}}}};
+var dbTableList = [{"table":"departments","label":"Departments","icon":"fa-building"},{"table":"positions","label":"Positions","icon":"fa-id-badge"},{"table":"employees","label":"Employees","icon":"fa-users"},{"table":"projects","label":"Projects","icon":"fa-project-diagram"},{"table":"skills","label":"Skills","icon":"fa-code"},{"table":"certificates","label":"Certificates","icon":"fa-certificate"},{"table":"comments","label":"Comments","icon":"fa-comments"},{"table":"employeesProjects","label":"Employee \u2194 Project Links","icon":"fa-link"}];
 
 // ===== VIEW MODEL =====
 function DbViewModel() {

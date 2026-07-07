@@ -106,10 +106,25 @@ class Model_Project extends Model
     }
 
     /**
-     * Sync members: remove all current members, then add the new list
+     * Sync members: remove all current members, then add the new list.
+     * The project leader is always guaranteed to be included as a member,
+     * regardless of what the caller passes in.
      */
-    public static function sync_members($project_id, $employee_ids)
+    public static function sync_members($project_id, $employee_ids, $leader_id = null)
     {
+        $employee_ids = is_array($employee_ids) ? $employee_ids : array();
+
+        // Normalize to unique integers
+        $employee_ids = array_unique(array_map('intval', $employee_ids));
+
+        // Always ensure the leader is included as a member
+        if ($leader_id) {
+            $leader_id = (int) $leader_id;
+            if (!in_array($leader_id, $employee_ids, true)) {
+                $employee_ids[] = $leader_id;
+            }
+        }
+
         // Remove all current members
         DB::delete('employeesProjects')
             ->where('project_id', '=', $project_id)
@@ -122,6 +137,32 @@ class Model_Project extends Model
                 ->param('proj_id', (int) $project_id)
                 ->execute();
         }
+    }
+
+    /**
+     * Scan all projects and return the IDs of any project whose leader
+     * is currently missing from its member list (employeesProjects).
+     */
+    public static function find_projects_missing_leader()
+    {
+        return DB::query(
+            "SELECT p.id, p.leader_id
+             FROM projects p
+             LEFT JOIN employeesProjects ep
+                    ON ep.project_id = p.id AND ep.employee_id = p.leader_id
+             WHERE ep.employee_id IS NULL"
+        )->execute()->as_array();
+    }
+
+    /**
+     * Insert the leader as a member for a given project (used by the data-fix routine).
+     */
+    public static function add_member($project_id, $employee_id)
+    {
+        DB::query("INSERT IGNORE INTO `employeesProjects` (`employee_id`, `project_id`) VALUES (:emp_id, :proj_id)")
+            ->param('emp_id', (int) $employee_id)
+            ->param('proj_id', (int) $project_id)
+            ->execute();
     }
 
     /**

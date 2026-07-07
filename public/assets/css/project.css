@@ -690,6 +690,31 @@ body {
     color: #1b5e20;
 }
 
+.member-chip-leader {
+    background: #ede7f6;
+    color: #5e35b1;
+    border-color: #b39ddb;
+    padding-right: 10px;
+}
+
+.member-chip-leader-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    font-size: 0.68rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+    color: #5e35b1;
+    background: #d1c4e9;
+    padding: 2px 7px;
+    border-radius: 10px;
+}
+
+.member-chip-leader-badge i {
+    font-size: 0.65rem;
+}
+
 .no-members {
     font-size: 0.85rem;
     color: var(--muted-text);
