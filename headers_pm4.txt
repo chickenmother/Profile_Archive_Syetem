@@ -1,0 +1,10 @@
+HTTP/1.1 302 Found
+Date: Tue, 07 Jul 2026 07:02:14 GMT
+Server: Apache/2.4.52 (Debian)
+X-Powered-By: PHP/7.3.33
+Set-Cookie: remember_token=deleted; expires=Thu, 01-Jan-1970 00:00:01 GMT; Max-Age=0; path=/
+Location: http://localhost/dashboard
+Set-Cookie: fuelcid=LMhxzdKlhp6ZkzqlXUoDszodwEMmOdu41LXdZOQUpKlBpSYRSTwYHb-kEBRBb9maiTaxzD2-ktXJwQYEDICWMkbggKal8aF7sTc_neUFskbwSPQ65BNay5eulgMo3QVL7p_gKaLk0RQuAuXp7wGuxkYAYPJYY_qKLPxn1uTP9-8jnX73gGX2RVjq5Jl9847jHk2-aiH6Oz8ZTsZmywLRMFxfHcyJzHs8NTdbUSemthMDckfdeHLHREXyg3SVskmhJ6rEDt3y2jX6QOicaFxywmlD6fhJQBRlOJ7B77OqV4PRk4zBBMHK25J0ESpAR9-jhChSPNMVY5XnemdyL4gvBV3gATN1WPCtUom35Bgp1IL7FynchFOhAyy5IS_rItAjz17LIbo9BfxLpGgn0vdfZU4jv0hR-VcP3hk95SOqda-9KLJzNWLL__PYZiOCNvlwSldFNTZkLWhFbmFfRldFZkJ1R0NDT2tlcVhsZWRMakxkSWZTeEVTQ3Z2TQ; expires=Tue, 07-Jul-2026 09:02:15 GMT; Max-Age=7200; path=/
+Content-Length: 0
+Content-Type: text/html; charset=UTF-8
+

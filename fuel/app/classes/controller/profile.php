@@ -58,6 +58,7 @@ class Controller_Profile extends Controller
             'id'          => $employee_id,
             'name'        => Session::get('employee_name'),
             'admin_level' => $admin_level,
+            'avatar'      => !empty($employee['avatar']) ? '/assets/uploads/avatars/' . $employee['avatar'] : '',
         );
 
         $view = View::forge('profile/index');

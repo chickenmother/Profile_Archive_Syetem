@@ -33,28 +33,17 @@
         <a href="/profile" class="dropdown-nav-item">
             <span><i class="fas fa-user-circle"></i> My Profile</span>
         </a>
-        <?php if ($current_user['admin_level'] >= 3): ?>
-        <button class="dropdown-nav-item" onclick="alert('Project Management - coming soon!')">
+        <a href="/account" class="dropdown-nav-item">
+            <span><i class="fas fa-user-cog"></i> Account</span>
+        </a>
+        <a href="/project" class="dropdown-nav-item">
             <span><i class="fas fa-project-diagram"></i> Project</span>
-        </button>
-        <?php else: ?>
-        <button class="dropdown-nav-item" disabled style="opacity:0.5; cursor:not-allowed;">
-            <span><i class="fas fa-project-diagram"></i> Project</span>
-            <span class="badge-lock"><i class="fas fa-lock"></i></span>
-        </button>
-        <?php endif; ?>
+        </a>
         <?php if ($current_user['admin_level'] >= 5): ?>
-        <button class="dropdown-nav-item" onclick="alert('Account Management - coming soon!')">
-            <span><i class="fas fa-users-cog"></i> Account</span>
-        </button>
-        <button class="dropdown-nav-item" onclick="alert('Database Management - coming soon!')">
+        <a href="/db" class="dropdown-nav-item">
             <span><i class="fas fa-database"></i> Database</span>
-        </button>
+        </a>
         <?php else: ?>
-        <button class="dropdown-nav-item" disabled style="opacity:0.5; cursor:not-allowed;">
-            <span><i class="fas fa-users-cog"></i> Account</span>
-            <span class="badge-lock"><i class="fas fa-lock"></i></span>
-        </button>
         <button class="dropdown-nav-item" disabled style="opacity:0.5; cursor:not-allowed;">
             <span><i class="fas fa-database"></i> Database</span>
             <span class="badge-lock"><i class="fas fa-lock"></i></span>
@@ -131,7 +120,7 @@
 
         <div class="search-input-wrapper">
             <i class="fas fa-search search-icon"></i>
-            <input type="text" placeholder="Search by name..." data-bind="value: searchText, event: { keyup: applyFilters }">
+            <input type="text" placeholder="Search by name..." data-bind="textInput: searchText">
         </div>
     </div>
 
@@ -277,7 +266,7 @@
                     <div class="modal-project-row">
                         <div class="project-info">
                             <span class="project-name" data-bind="text: name"></span>
-                            <span class="project-dates" data-bind="text: start_date + ' → ' + end_date"></span>
+                            <span class="project-dates" data-bind="text: start_date + ' → ' + end_date || 'Ongoing'"></span>
                         </div>
                         <span class="project-status-chip" data-bind="text: status, css: { 'status-ongoing': status === 'ongoing', 'status-completed': status === 'completed', 'status-planning': status === 'planning' }"></span>
                     </div>
