@@ -616,7 +616,7 @@ function DbViewModel() {
                     self.showFormMessage(res.error || 'An error occurred', 'error');
                 }
             } catch (e) {
-                self.showFormMessage('Server error: ' + xhr.responseText.substring(0, 150), 'error');
+                self.showFormMessage('An unexpected error occurred. Please try again later.', 'error');
             }
         };
         xhr.onerror = function() {

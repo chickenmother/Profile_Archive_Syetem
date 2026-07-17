@@ -587,7 +587,7 @@ function ProjectViewModel() {
                     self.showFormMessage(data.error || 'An error occurred', 'error');
                 }
             } catch (e) {
-                self.showFormMessage('Server error: ' + xhr.responseText.substring(0, 100), 'error');
+                self.showFormMessage('An unexpected error occurred. Please try again later.', 'error');
             }
         };
         xhr.onerror = function() {

@@ -186,7 +186,8 @@ class Controller_Db extends Controller
             $new_id = Model_Db::create_row($table, $data);
             return Response::forge(json_encode(array('success' => true, 'id' => $new_id)), 200, array('Content-Type' => 'application/json'));
         } catch (Exception $e) {
-            return Response::forge(json_encode(array('success' => false, 'error' => 'Database error: ' . $e->getMessage())), 500, array('Content-Type' => 'application/json'));
+            error_log('DB create error: ' . $e->getMessage());
+            return Response::forge(json_encode(array('success' => false, 'error' => 'An unexpected error occurred. Please try again later.')), 500, array('Content-Type' => 'application/json'));
         }
     }
 
@@ -244,7 +245,8 @@ class Controller_Db extends Controller
             Model_Db::update_row($table, $key, $data);
             return Response::forge(json_encode(array('success' => true)), 200, array('Content-Type' => 'application/json'));
         } catch (Exception $e) {
-            return Response::forge(json_encode(array('success' => false, 'error' => 'Database error: ' . $e->getMessage())), 500, array('Content-Type' => 'application/json'));
+            error_log('DB update error: ' . $e->getMessage());
+            return Response::forge(json_encode(array('success' => false, 'error' => 'An unexpected error occurred. Please try again later.')), 500, array('Content-Type' => 'application/json'));
         }
     }
 
