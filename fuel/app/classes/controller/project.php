@@ -174,7 +174,8 @@ class Controller_Project extends Controller
 
             return Response::forge(json_encode(array('success' => true)), 200, array('Content-Type' => 'application/json'));
         } catch (Exception $e) {
-            return Response::forge(json_encode(array('success' => false, 'error' => 'Database error: ' . $e->getMessage())), 500, array('Content-Type' => 'application/json'));
+            error_log('Project update error: ' . $e->getMessage());
+            return Response::forge(json_encode(array('success' => false, 'error' => 'An unexpected error occurred. Please try again later.')), 500, array('Content-Type' => 'application/json'));
         }
     }
 

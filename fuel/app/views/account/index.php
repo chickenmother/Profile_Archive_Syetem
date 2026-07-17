@@ -126,6 +126,7 @@
     </div>
 
 <script>
+    var csrfToken = '<?php echo Security::fetch_token(); ?>';
     var accountData = <?php echo isset($account_json) ? $account_json : '{}'; ?>;
 
     function AccountViewModel() {
@@ -161,6 +162,7 @@
             self.gateMsg('');
 
             var formData = new FormData();
+            formData.append('fuel_csrf_token', csrfToken);
             formData.append('password', password);
 
             fetch('/account/verify_password', { method: 'POST', body: formData })
@@ -201,6 +203,7 @@
             }
 
             var formData = new FormData();
+            formData.append('fuel_csrf_token', csrfToken);
             formData.append('name', name);
 
             fetch('/account/update_name', { method: 'POST', body: formData })
@@ -236,6 +239,7 @@
             }
 
             var formData = new FormData();
+            formData.append('fuel_csrf_token', csrfToken);
             formData.append('email', email);
 
             fetch('/account/update_email', { method: 'POST', body: formData })
@@ -278,6 +282,7 @@
             }
 
             var formData = new FormData();
+            formData.append('fuel_csrf_token', csrfToken);
             formData.append('new_password', newPass);
             formData.append('confirm_password', confirmPass);
 

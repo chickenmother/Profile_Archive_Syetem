@@ -256,6 +256,7 @@
 
 <script>
 // ===== DATA =====
+var csrfToken = '<?php echo Security::fetch_token(); ?>';
 var allProjectsData = <?php echo $projects_json; ?>;
 var allEmployeesData = <?php echo $employees_json; ?>;
 var currentUserId = <?php echo (int)$current_user['id']; ?>;
@@ -558,7 +559,8 @@ function ProjectViewModel() {
         if (!startDate) { self.showFormMessage('Start date is required', 'error'); return; }
 
         var url = projectId ? '/project/update' : '/project/create';
-        var params = 'name=' + encodeURIComponent(name) +
+        var params = 'fuel_csrf_token=' + encodeURIComponent(csrfToken) +
+                     '&name=' + encodeURIComponent(name) +
                      '&leader_id=' + encodeURIComponent(leaderId) +
                      '&start_date=' + encodeURIComponent(startDate) +
                      '&end_date=' + encodeURIComponent(endDate || '') +
@@ -585,7 +587,7 @@ function ProjectViewModel() {
                     self.showFormMessage(data.error || 'An error occurred', 'error');
                 }
             } catch (e) {
-                self.showFormMessage('Server error: ' + xhr.responseText.substring(0, 100), 'error');
+                self.showFormMessage('An unexpected error occurred. Please try again later.', 'error');
             }
         };
         xhr.onerror = function() {
@@ -621,7 +623,7 @@ function ProjectViewModel() {
                 self.closeConfirmDialog();
             }
         };
-        xhr.send('project_id=' + encodeURIComponent(projectId));
+        xhr.send('fuel_csrf_token=' + encodeURIComponent(csrfToken) + '&project_id=' + encodeURIComponent(projectId));
     };
 
     // ===== METHODS: REFRESH =====

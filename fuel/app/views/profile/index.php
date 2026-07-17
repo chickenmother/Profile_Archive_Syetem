@@ -212,6 +212,7 @@
     </div>
 
 <script>
+    var csrfToken          = '<?php echo Security::fetch_token(); ?>';
     var employeeData      = <?php echo isset($employee_json) ? $employee_json : '{}'; ?>;
     var skillsConfig       = <?php echo isset($skills_json) ? $skills_json : '{}'; ?>;
     var certsConfig        = <?php echo isset($certificates_json) ? $certificates_json : '{}'; ?>;
@@ -263,6 +264,7 @@
             if (!file) return;
 
             var formData = new FormData();
+            formData.append('fuel_csrf_token', csrfToken);
             formData.append('avatar', file);
 
             self.avatarMsg('Uploading...');
@@ -293,6 +295,7 @@
             var content = self.employee().introduction();
 
             var formData = new FormData();
+            formData.append('fuel_csrf_token', csrfToken);
             formData.append('introduction', content);
 
             fetch('/profile/update_introduction', { method: 'POST', body: formData })
@@ -326,6 +329,7 @@
             }
 
             var formData = new FormData();
+            formData.append('fuel_csrf_token', csrfToken);
             formData.append('skill_id', skillId);
             formData.append('level', level);
 
@@ -346,6 +350,7 @@
 
         self.removeSkill = function(rowId) {
             var formData = new FormData();
+            formData.append('fuel_csrf_token', csrfToken);
             formData.append('row_id', rowId);
 
             fetch('/profile/remove_skill', { method: 'POST', body: formData })
@@ -384,6 +389,7 @@
             }
 
             var formData = new FormData();
+            formData.append('fuel_csrf_token', csrfToken);
             formData.append('certificate_id', certId);
             formData.append('level', level);
             formData.append('scale', scale);
@@ -406,6 +412,7 @@
 
         self.removeCertificate = function(rowId) {
             var formData = new FormData();
+            formData.append('fuel_csrf_token', csrfToken);
             formData.append('row_id', rowId);
 
             fetch('/profile/remove_certificate', { method: 'POST', body: formData })

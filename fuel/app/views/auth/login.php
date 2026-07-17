@@ -37,7 +37,8 @@
         <?php endif; ?>
 
         <form action="/auth/login" method="POST">
-            
+            <?php echo Form::csrf(); ?>
+
             <div class="form-group <?php echo Session::get_flash('error') ? 'has-error' : ''; ?>">
                 <label for="email">Email</label>
                 <div class="input-wrapper">
