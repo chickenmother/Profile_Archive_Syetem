@@ -212,6 +212,7 @@
 
 <script>
 // ===== DATA FROM SERVER =====
+var csrfToken = '<?php echo Security::fetch_token(); ?>';
 var dbSchema = <?php echo $schema_json; ?>;
 var dbTableList = <?php echo $table_list_json; ?>;
 
@@ -587,7 +588,7 @@ function DbViewModel() {
 
         var isEdit = (self.formMode() === 'edit');
         var url = isEdit ? '/db/update' : '/db/create';
-        var params = 'table=' + encodeURIComponent(table) + '&data=' + encodeURIComponent(JSON.stringify(data));
+        var params = 'fuel_csrf_token=' + encodeURIComponent(csrfToken) + '&table=' + encodeURIComponent(table) + '&data=' + encodeURIComponent(JSON.stringify(data));
 
         if (isEdit) {
             if (tableSchema.primary_key) {
@@ -627,7 +628,7 @@ function DbViewModel() {
     // ===== METHODS: DELETE =====
     self.buildDeleteParams = function(table, keyOrRow, fromRow) {
         var tableSchema = self.schema[table];
-        var params = 'table=' + encodeURIComponent(table);
+        var params = 'fuel_csrf_token=' + encodeURIComponent(csrfToken) + '&table=' + encodeURIComponent(table);
         if (tableSchema.primary_key) {
             var idVal = fromRow ? keyOrRow[tableSchema.primary_key] : keyOrRow;
             params += '&id=' + encodeURIComponent(idVal);

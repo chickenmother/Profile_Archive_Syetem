@@ -351,6 +351,9 @@
             if (strip) strip.classList.toggle('collapsed');
         }
 
+        // ===== CSRF Token =====
+        var csrfToken = '<?php echo Security::fetch_token(); ?>';
+
         // ===== Knockout.js Data Initialization Pipeline =====
         var employeesData = <?php echo isset($employees_json) ? $employees_json : '[]'; ?>;
         var skillsConfig  = <?php echo isset($skills_json) ? $skills_json : '{}'; ?>;
@@ -526,6 +529,7 @@
                 }
 
                 var formData = new FormData();
+                formData.append('fuel_csrf_token', csrfToken);
                 formData.append('receiver_id', receiverId);
                 formData.append('content', content);
 
@@ -607,6 +611,7 @@
                 if (!newContent) return;
 
                 var formData = new FormData();
+                formData.append('fuel_csrf_token', csrfToken);
                 formData.append('comment_id', commentId);
                 formData.append('content', newContent);
 
@@ -636,6 +641,7 @@
                 if (!confirm('Delete this comment?')) return;
 
                 var formData = new FormData();
+                formData.append('fuel_csrf_token', csrfToken);
                 formData.append('comment_id', commentId);
 
                 fetch('/dashboard/delete_comment', { method: 'POST', body: formData })
